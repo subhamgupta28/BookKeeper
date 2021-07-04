@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/booksearch"
+        android:icon="@drawable/ic_find_in_page"
+        android:title="Search"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.SearchView" />
+
+
+    <item
+        android:id="@+id/savebook"
+        android:title="Save Book"
+        android:icon="@drawable/ic_save"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/expand"
+        android:title="Save Book"
+        android:checkable="true"
+        android:icon="@drawable/ic_fullscreen"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/collapse"
+        android:title="Minimize"
+        android:checkable="true"
+        android:enabled="false"
+        android:icon="@drawable/ic_collapse"
+        app:showAsAction="always" />
+
+
+
+</menu>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="12dp"
+    android:layout_margin="4dp"
+    android:id="@+id/bottomsheetlayout"
+    app:behavior_hideable="true"
+    app:cardElevation="18dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/colorRed"
+    app:behavior_peekHeight="1dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+   >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:orientation="horizontal">
+
+
+                <EditText
+                    android:id="@+id/gotopage"
+                    android:layout_width="wrap_content"
+                    android:hint="Go to page no."
+                    android:background="#0029B6F6"
+                    android:layout_height="match_parent"
+                    />
+
+
+            <Button
+                android:id="@+id/btngo"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="go"
+
+                android:layout_marginStart="4dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="8dp"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/pageslider"
+
+            android:stepSize="1"
+            app:trackHeight="10dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="90dp"
+            />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

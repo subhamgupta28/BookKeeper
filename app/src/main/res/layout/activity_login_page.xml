@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/relativecolor"
+    android:background="@drawable/gradient"
+    android:layout_height="match_parent"
+    tools:context=".LoginPage">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialcardlog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:layout_centerInParent="true"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="16dp"
+        android:focusable="true"
+        android:checkable="true"
+        android:clickable="true"
+        app:cardElevation="16dp">
+
+        <LinearLayout
+            android:id="@+id/linearlog"
+            android:background="#00E13453"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:padding="32dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv00"
+
+                android:layout_width="match_parent"
+                android:text="Login Or Create An Account"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_height="wrap_content"/>
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/logprogress"
+                app:indeterminateAnimationType="disjoint"
+                app:indicatorColor="@color/colorRed"
+                app:trackThickness="5dp"
+                app:trackCornerRadius="2dp"
+                android:indeterminate="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textemail"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                tools:layout_editor_absoluteX="1dp"
+                android:layout_below="@+id/tv00"
+                android:hint="Email"
+                app:endIconMode="clear_text"
+
+                app:errorEnabled="true"
+
+                app:errorIconDrawable="@drawable/ic_error"
+                app:startIconDrawable="@drawable/ic_email"
+                android:forceDarkAllowed="false"
+                tools:layout_editor_absoluteY="244dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tvemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textpass"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:forceDarkAllowed="false"
+                android:layout_marginTop="8dp"
+                tools:layout_editor_absoluteX="1dp"
+                android:layout_below="@+id/textemail"
+                android:hint="Password"
+
+
+
+
+                app:endIconMode="password_toggle"
+                app:errorEnabled="true"
+                app:startIconDrawable="@drawable/ic_pass"
+                tools:layout_editor_absoluteY="244dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tvpass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btlogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:strokeColor="@color/colorPrimary"
+                app:icon="@drawable/ic_login"
+
+                app:iconGravity="textStart"
+                android:text="login"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_marginTop="8dp"
+
+                android:layout_centerHorizontal="true"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btcreate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:strokeColor="@color/colorPrimary"
+                android:text="Create account"
+                app:icon="@drawable/ic_add"
+
+                app:iconGravity="textStart"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_marginTop="10dp"
+
+                android:layout_centerHorizontal="true"/>
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="8dp"
+                android:text="OR"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textStyle="bold"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_google__g__logo"
+                android:layout_marginTop="8dp"
+                app:iconPadding="1dp"
+
+
+                app:iconGravity="textStart"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                app:strokeColor="@color/colorPrimary"
+                android:text="Sign in with google"
+                 />
+
+
+
+
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+
+
+</RelativeLayout>

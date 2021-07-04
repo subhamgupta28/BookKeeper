@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ExploreFrangments">
+    <TextView
+        android:id="@+id/netstatus"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/exprogress"
+        android:layout_width="match_parent"
+        android:indeterminate="true"
+        android:visibility="gone"
+        android:layout_below="@id/netstatus"
+        app:indeterminateAnimationType="disjoint"
+        app:indicatorColor="@color/colorRed"
+
+        android:layout_height="wrap_content" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeexplorebooks"
+        android:layout_below="@id/exprogress">
+    <!-- TODO: Update blank fragment layout -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/explorerecyler"
+        android:padding="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/extvcheck"
+        android:layout_width="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:layout_centerInParent="true" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/exloadingview"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        app:lottie_rawRes="@raw/loadinganime"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"/>
+</RelativeLayout>

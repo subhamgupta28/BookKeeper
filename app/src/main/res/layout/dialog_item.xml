@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="12dp"
+    android:layout_margin="12dp"
+    android:layout_height="wrap_content">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_margin="8dp"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/dtext"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:layout_width="match_parent"
+        android:text="Text"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/negbutton"
+        android:layout_below="@id/dtext"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:text="Cancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/posbutton"
+        android:layout_below="@id/dtext"
+        android:layout_width="wrap_content"
+        android:layout_toStartOf="@id/negbutton"
+        android:text="EXit"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_margin="8dp"
+        android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

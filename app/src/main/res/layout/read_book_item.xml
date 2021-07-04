@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="4dp"
+    android:id="@+id/readcard"
+    android:clickable="true"
+    app:cardElevation="2dp"
+    android:focusable="true"
+    app:cardCornerRadius="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+            <EditText
+                android:id="@+id/chapter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="80dp"
+
+                android:inputType="none"
+                android:layout_margin="6dp"
+                android:autoLink="all"
+                android:layout_alignParentTop="true"
+                android:linksClickable="true"
+                android:background="@android:color/transparent"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                style="@style/Widget.MaterialComponents.TextView"
+                android:text="Title"
+                android:scrollbars="vertical"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
+
+        <EditText
+            android:id="@+id/descriptmulti"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/chapter"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:autoLink="all"
+            android:layout_above="@id/lmc"
+            android:linksClickable="true"
+            android:layout_margin="6dp"
+            android:hint="Type text here..."
+            android:gravity="start|top"
+            android:inputType="textMultiLine" />
+
+
+
+    <LinearLayout
+        android:id="@+id/lmc"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+
+
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom|center"
+        android:orientation="horizontal">
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btndel"
+            android:layout_width="wrap_content"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            app:iconGravity="textStart"
+            app:icon="@drawable/ic_delete"
+            app:iconTint="#E30425"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btnsave"
+            android:layout_width="wrap_content"
+            app:icon="@drawable/ic_save"
+
+            android:layout_marginStart="2dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            />
+        <Button
+            android:id="@+id/btnbold"
+            android:layout_width="wrap_content"
+            app:icon="@drawable/ic_bold"
+            android:layout_marginStart="2dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            />
+        <Button
+            android:id="@+id/btnitalic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_italic"
+            android:layout_marginStart="2dp"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            />
+        <Button
+            android:id="@+id/btnunderlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_underlined"
+            android:layout_marginStart="2dp"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            />
+    </LinearLayout>
+
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/tvpageno"
+        android:layout_width="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:layout_gravity="end|bottom"
+        android:text="1"
+
+        android:textSize="20sp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:layout_height="wrap_content"/>
+
+</com.google.android.material.card.MaterialCardView>
