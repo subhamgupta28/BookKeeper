@@ -147,9 +147,8 @@ public class AllBooks extends AppCompatActivity  {
         syncnow =findViewById(R.id.syncnow);
         synccancel =findViewById(R.id.synccancel);
         progressBar.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() -> _init(),200);
+        new Handler().postDelayed(() -> _init(),300);
 
-//       abtitle.setTextSize(50);
         
     }
 
