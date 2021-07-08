@@ -104,29 +104,7 @@
     android:layout_centerInParent="true"
 
     android:layout_height="60dp"/>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content">
 
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/abbottombar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar"
-        app:fabAlignmentMode="end"
-        android:forceDarkAllowed="false"
-
-        app:menu="@menu/menu"
-        app:elevation="24dp"
-        app:fabCradleRoundedCornerRadius="12dp"
-        app:navigationIcon="@drawable/ic_more"
-        app:navigationContentDescription="More"
-
-        app:fabCradleMargin="4dp"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </RelativeLayout>

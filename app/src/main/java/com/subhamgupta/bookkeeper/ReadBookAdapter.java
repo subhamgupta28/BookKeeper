@@ -39,11 +39,7 @@ public class ReadBookAdapter extends RecyclerView.Adapter<ReadBookAdapter.ReadBo
 
     public ReadBookAdapter(List<ReadBookModel> bookchap) {
         this.bookchap = bookchap;
-        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-        exec.scheduleAtFixedRate(() -> {
-            // code to execute repeatedly
-            Log.e("Timerggg","0");
-        }, 0, 20, TimeUnit.SECONDS);
+
     }
 
     @NonNull

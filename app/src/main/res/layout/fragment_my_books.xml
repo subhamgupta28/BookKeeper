@@ -36,7 +36,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mybookrecycler"
-
+                android:layoutAnimation="@anim/recycler_animator"
                 android:padding="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

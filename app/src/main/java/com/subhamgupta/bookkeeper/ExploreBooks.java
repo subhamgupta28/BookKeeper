@@ -45,12 +45,18 @@ import com.google.gson.JsonParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class ExploreBooks extends AppCompatActivity {
@@ -122,46 +128,47 @@ public class ExploreBooks extends AppCompatActivity {
 
         if(fileurl!=null){
             progressBar.setVisibility(View.VISIBLE);
-            downloadFile(getApplicationContext(), key+".json",fileurl);
+            downloadFile(/*getApplicationContext(),*/ key+".json",fileurl);
             Log.e("file",fileurl);
         }
         else{
             setEmptyCard();
         }
-        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //Fetching the download id received with the broadcast
 
-                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L);
-                //Checking if the received broadcast is for our enqueued download by matching download id
-                if (downloadID == id) {
-                    Log.e("File", "Downloaded");
-                    jsonStr = jsonHelper.readSharedFile(key);
-                    setData(jsonStr);
-                }
-            }
-        };
-        registerReceiver(onDownloadComplete, filter);
 
 
 
         //badgeDrawable.setNumber(4);
     }
-    public void downloadFile(Context context, String fileName, String url) {
-        DownloadManager downloadmanager = (DownloadManager) context.
-                getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(url);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
-        /*File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),null);
-        if (!file.isDirectory())
-        {
-            file.mkdir();
-        }*/
-        request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "/Shared Books/"+fileName);
-        downloadID = downloadmanager.enqueue(request);
+
+    public void downloadFile( String filename,String url1){
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(() -> {
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+            try (BufferedInputStream in = new BufferedInputStream(new URL(url1).openStream());
+                 FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS+"/Shared Books/"+filename))
+            )
+            {
+                byte[] dataBuffer = new byte[2048];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 2048)) != -1) {
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                    Log.e("data", String.valueOf(bytesRead));
+                }
+                runOnUiThread(() -> {
+                    jsonStr = jsonHelper.readSharedFile(key);
+                    setData(jsonStr);
+                });
+            } catch (IOException er) {
+                // handle exception
+                Log.e("error", er.getMessage());
+            }
+
+        });
+        Log.e("error", "er.getMessage()");
+
+
+
     }
 
     public void setEmptyCard(){

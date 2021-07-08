@@ -68,9 +68,6 @@ public class ExploreFrangments extends Fragment {
         //progressBar.setVisibility(View.VISIBLE);
         netStat();
         recyclerView.setHasFixedSize(true);
-
-
-
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
 
         swipeRefreshLayout.setOnRefreshListener(this::getBooks);

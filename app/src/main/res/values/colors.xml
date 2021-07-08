@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#A61128</color>
+    <color name="purple_200">#DB4437</color>
     <color name="grey">#121212</color>
     <color name="light_grey">#737373</color>
-    <color name="teal_200">#0288D1</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="teal_200">#4285F4</color>
+    <color name="teal_700">#0F9D58</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="colorPrimary">#0288D1</color>
+    <color name="colorPrimary">#4285F4</color>
     <color name="colorPrimaryVariant">#000000</color>
     <color name="colorOnPrimary">#FFFFFF</color>
     <!-- Secondary brand color. -->
-    <color name="colorSecondary">#FFD740</color>
+    <color name="colorSecondary">#F4B400</color>
     <color name="colorSecondaryVariant">#FF6D00</color>
     <color name="colorOnSecondary">#000000</color>
-    <color name="colorRed">#E13453</color>
+    <color name="colorRed">#DB4437</color>
     <color name="colorTransparent">#00D52142</color>
     <color name="colorDayPopup">#FFFFF0</color>
     <color name="colorNightPopup">#535353</color>

@@ -72,13 +72,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class AllBooks extends AppCompatActivity  {
@@ -247,13 +253,13 @@ public class AllBooks extends AppCompatActivity  {
         }
         else if(fileurl!=null){
             progressBar.setVisibility(View.VISIBLE);
-            downloadFile(getApplicationContext(), key+".json", fileurl);
+            downloadFile(/*getApplicationContext(),*/ key+".json", fileurl);
         }
         else{
             setEmptyCard();
         }
         syncnow.setOnClickListener(view -> {sync();});
-        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        /*IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -268,7 +274,7 @@ public class AllBooks extends AppCompatActivity  {
                 }
             }
         };
-        registerReceiver(onDownloadComplete, filter);
+        registerReceiver(onDownloadComplete, filter);*/
         btngo.setOnClickListener(view -> {
             int pg = Integer.parseInt(gotopage.getText().toString());
             if(pg<=chap.size())
@@ -336,7 +342,7 @@ public class AllBooks extends AppCompatActivity  {
         Log.e("menu_selected",menu.toString());
         return super.onCreateOptionsMenu(menu);
     }
-    public void downloadFile(Context context, String fileName, String url) {
+    /*public void downloadFile(Context context, String fileName, String url) {
         DownloadManager downloadmanager = (DownloadManager) context.
                 getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(url);
@@ -344,6 +350,35 @@ public class AllBooks extends AppCompatActivity  {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
         request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "/BookKeeper/"+fileName);
         downloadID = downloadmanager.enqueue(request);
+    }*/
+    public void downloadFile( String filename,String url1){
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(() -> {
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+            try (BufferedInputStream in = new BufferedInputStream(new URL(url1).openStream());
+                 FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS+"/BookKeeper/"+filename))
+            )
+            {
+                byte[] dataBuffer = new byte[2048];
+                int bytesRead;
+                while ((bytesRead = in.read(dataBuffer, 0, 2048)) != -1) {
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                    Log.e("data", String.valueOf(bytesRead));
+                }
+                runOnUiThread(() -> {
+                    jsonStr = jsonHelper.readFile(key);
+                    setData(jsonStr);
+                });
+            } catch (IOException er) {
+                // handle exception
+                Log.e("error", er.getMessage());
+            }
+
+        });
+        Log.e("error", "er.getMessage()");
+
+
+
     }
 
     public void setEmptyCard(){
@@ -377,7 +412,7 @@ public class AllBooks extends AppCompatActivity  {
             if (file.isDirectory()) {
                 new File(file, key+".json").delete();
             }
-            downloadFile(getApplicationContext(), key+".json", fileurl);
+            downloadFile( key+".json", fileurl);
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(FirebaseAuth.getInstance().getUid());
             ref.child(key).child("SYNC").setValue("synced").addOnSuccessListener(unused -> synclayout.setVisibility(View.GONE)).addOnFailureListener(e -> {
 
