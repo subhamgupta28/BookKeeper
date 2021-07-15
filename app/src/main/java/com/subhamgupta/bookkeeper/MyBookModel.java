@@ -7,7 +7,10 @@ public class MyBookModel {
     private String BOOKREF;
     private String IMAGENAME;
     private String DESCRIPTION;
+
+
     private String KEY;
+    private String EMAIL;
     private String SYNC;
     private String FILELINK;
     private long RATINGS;
@@ -17,7 +20,11 @@ public class MyBookModel {
     public MyBookModel() {
     }
 
-    public MyBookModel(String TITLE, String AUTHOR, String IMAGELINK, String BOOKREF, String IMAGENAME, String DESCRIPTION, String KEY, String SYNC, String FILELINK, long RATINGS, int RATING_COUNT, boolean PUBLISHED) {
+    public MyBookModel(String TITLE, String AUTHOR, String IMAGELINK,
+                       String BOOKREF, String IMAGENAME, String DESCRIPTION,
+                       String KEY, String EMAIL, String SYNC, String FILELINK,
+                       long RATINGS, int RATING_COUNT, boolean PUBLISHED)
+    {
         this.TITLE = TITLE;
         this.AUTHOR = AUTHOR;
         this.IMAGELINK = IMAGELINK;
@@ -25,11 +32,20 @@ public class MyBookModel {
         this.IMAGENAME = IMAGENAME;
         this.DESCRIPTION = DESCRIPTION;
         this.KEY = KEY;
+        this.EMAIL = EMAIL;
         this.SYNC = SYNC;
         this.FILELINK = FILELINK;
         this.RATINGS = RATINGS;
         this.RATING_COUNT = RATING_COUNT;
         this.PUBLISHED = PUBLISHED;
+    }
+
+    public String getEMAIL() {
+        return EMAIL;
+    }
+
+    public void setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
     }
 
     public String getSYNC() {

@@ -11,9 +11,13 @@ public class Model {
      private String FILELINK;
      private long RATINGS;
      private int RATING_COUNT;
+     private boolean PUBLISHED;
 
 
-    public Model(String TITLE, String AUTHOR, String IMAGELINK, String BOOKREF, String IMAGENAME, String DESCRIPTION, String KEY, long RATINGS, int RATING_COUNT) {
+    public Model(String TITLE, String AUTHOR, String IMAGELINK,
+                 String BOOKREF, String IMAGENAME, String DESCRIPTION,
+                 String KEY, long RATINGS, int RATING_COUNT)
+    {
         this.TITLE = TITLE;
         this.AUTHOR = AUTHOR;
         this.IMAGELINK = IMAGELINK;
@@ -29,14 +33,20 @@ public class Model {
 
     }
 
+    public boolean isPUBLISHED() {
+        return PUBLISHED;
+    }
+
+    public void setPUBLISHED(boolean PUBLISHED) {
+        this.PUBLISHED = PUBLISHED;
+    }
+
     public String getFILELINK() {
         return FILELINK;
     }
-
     public void setFILELINK(String FILELINK) {
         this.FILELINK = FILELINK;
     }
-
     public String getKEY() {
         return KEY;
     }

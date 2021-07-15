@@ -94,6 +94,9 @@ public class SharedReader extends AppCompatActivity {
         progressBar = findViewById(R.id.loading);
         jsonHelper = new JsonHelper();
 
+        File fl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/Shared Books/");
+        if(!fl.exists())
+            fl.mkdir();
 
         Uri uri = getIntent().getData();
         Log.e("uri",uri.toString());
@@ -140,8 +143,10 @@ public class SharedReader extends AppCompatActivity {
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
             Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+
             try (BufferedInputStream in = new BufferedInputStream(new URL(url1).openStream());
                  FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS+"/Shared Books/"+filename+".json"))
+
             )
             {
                 byte dataBuffer[] = new byte[2048];

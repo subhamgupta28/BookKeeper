@@ -5,11 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="27" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION" />
+
 
     <application
         android:allowBackup="true"
@@ -22,7 +19,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.BookKeeper">
-        <activity android:name=".Editor"></activity>
+        <activity android:name=".Editor" />
         <activity android:name=".SharedReader">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -37,12 +34,20 @@
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ExploreBooks" />
-        <activity android:name=".LoginPage" />
+        <activity android:name=".LoginPage" >
+           <!-- <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="subhamgupta.page.link"
+                    android:scheme="https" />
+            </intent-filter>-->
+        </activity>
         <activity android:name=".AllBooks">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

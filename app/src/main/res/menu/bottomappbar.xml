@@ -11,8 +11,8 @@
 
     <item
         android:id="@+id/myinfo"
-        android:title="Settings"
-        android:icon="@drawable/ic_settings"
+        android:title="Profile"
+        android:icon="@drawable/ic_author"
         app:showAsAction="always" />
 
 

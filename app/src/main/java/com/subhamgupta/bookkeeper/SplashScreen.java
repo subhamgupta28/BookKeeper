@@ -1,18 +1,18 @@
 package com.subhamgupta.bookkeeper;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.os.Handler;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,6 +26,13 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        FirebaseApp.initializeApp(this);
+        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+        firebaseAppCheck.installAppCheckProviderFactory(
+                SafetyNetAppCheckProviderFactory.getInstance());
+
         mAuth = FirebaseAuth.getInstance();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -33,11 +40,7 @@ public class SplashScreen extends AppCompatActivity {
         imageView = findViewById(R.id.splashimage);
         splashtext = findViewById(R.id.splashtextview);
 
-        //splashtext.setText("Book Keeper");
-        /*Glide.with(imageView.getContext())
-                .load(R.drawable.icon)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imageView);*/
+
         sharedSession = new SharedSession(getApplicationContext());
         if (!sharedSession.getData().isEmpty()){
             if (sharedSession.isDarkTheme()){
@@ -51,21 +54,15 @@ public class SplashScreen extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         }
-//        if (AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
-//            sharedSession.setDarkTheme(true);
-//        }
-//        else sharedSession.setDarkTheme(false);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (currentUser!=null){
-                    HomeActivitty();
-                }else {
-                    LoginAvtivity();
-                }
 
+        new Handler().postDelayed(() -> {
+            if (currentUser!=null && currentUser.isEmailVerified()){
+                HomeActivitty();
+            }else {
+                LoginAvtivity();
             }
+
         }, 3000);
 
     }

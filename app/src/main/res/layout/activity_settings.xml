@@ -6,21 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Settings">
-    <TextView
-        android:id="@+id/accountinfo"
-        android:layout_width="wrap_content"
-        android:text="Account info"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
-        android:layout_height="wrap_content"/>
+
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/setingcard"
         android:layout_width="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp"
         android:layout_height="wrap_content">
@@ -36,8 +30,9 @@
         android:id="@+id/profileimg"
         android:layout_width="match_parent"
         android:layout_gravity="center"
+        android:src="@drawable/ic_author"
         android:foreground="@drawable/img_fade"
-        android:layout_height="260dp"/>
+        android:layout_height="160dp"/>
 
 
         <TextView
@@ -48,6 +43,12 @@
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:background="@color/colorSecondary"
+        android:layout_height="1dp"/>
         <TextView
             android:id="@+id/email"
             android:padding="8dp"
@@ -61,126 +62,133 @@
 
 
 </LinearLayout>
+
+        <TextView
+            android:id="@+id/accountinfo"
+            android:layout_width="wrap_content"
+            android:text="  Profile  "
+            android:background="@drawable/read_item_background"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_height="wrap_content"/>
     </com.google.android.material.card.MaterialCardView>
 
+
+
+
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    app:cardCornerRadius="12dp"
+    android:layout_margin="16dp"
+    app:cardElevation="8dp"
+    android:layout_height="wrap_content">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_margin="12dp"
+        android:orientation="vertical">
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/theme"
+            android:layout_width="match_parent"
+            android:text="Dark Theme"
+            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/lock"
+            android:layout_width="match_parent"
+            android:text="Lock"
+            android:visibility="gone"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
-        android:layout_gravity="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
+        android:text="  Settings  "
+        android:background="@drawable/read_item_background"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
 
-
-    <LinearLayout
+</com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/theme"
-            android:layout_width="160dp"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            android:clickable="true"
-            android:checkable="true"
-            android:focusable="true"
-            app:cardElevation="8dp"
-            android:padding="12dp"
+        android:layout_marginEnd="16dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="25dp"
             android:layout_height="match_parent">
             <TextView
-                android:layout_width="wrap_content"
-                android:text="THEME"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:id="@+id/backuptext"
+                android:layout_margin="12dp"
+                android:text="Loading..."
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/allbackup"
-            android:layout_width="160dp"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            android:clickable="true"
-            android:checkable="true"
-            android:focusable="true"
-            app:cardElevation="8dp"
-            android:padding="12dp"
-            android:layout_height="match_parent">
             <TextView
-                android:layout_width="wrap_content"
-                android:text="BACKUP"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:id="@+id/restoretext"
+                android:layout_margin="12dp"
+                android:text="Loading..."
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-
-
-        </com.google.android.material.card.MaterialCardView>
-
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/logout"
-            android:layout_width="160dp"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            android:clickable="true"
-            android:checkable="true"
-            android:focusable="true"
-            app:cardElevation="8dp"
-            android:padding="12dp"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="LOGOUT"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                app:indeterminateAnimationType="disjoint"
+                android:layout_marginStart="16dp"
+                app:trackCornerRadius="2dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:trackColor="#00FFFFFF"
                 android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:gravity="end"
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/allrestore"
+                    android:text="Restore"
+
+                    android:layout_marginEnd="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/allbackup"
+                    android:text="backup"
+                    android:layout_marginEnd="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  Info  "
+            android:background="@drawable/read_item_background"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/lock"
-            android:layout_width="160dp"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            android:clickable="true"
-            android:checkable="true"
-            android:focusable="true"
-            app:cardElevation="8dp"
-            android:padding="12dp"
-            android:layout_height="match_parent">
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="LOCK"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                android:layout_height="wrap_content"/>
+    </com.google.android.material.card.MaterialCardView>
 
 
-
-        </com.google.android.material.card.MaterialCardView>
-
-
-    </LinearLayout>
-
-
-
-
-
+<TextView
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:layout_margin="12dp"
+    android:text="More settings comming soon : )"
+    android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

@@ -2,12 +2,15 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="4dp"
+
     app:cardCornerRadius="8dp"
     app:cardElevation="12dp"
+
     android:focusable="true"
     android:id="@+id/bookcard"
 
@@ -41,10 +44,10 @@
                                 android:textColor="@color/colorOnPrimary"
                                 android:layout_height="wrap_content"
                                 android:text="TITLE"
-                                android:layout_marginStart="5dp"
+
                                 android:textStyle="bold"
                                 android:scrollbars="horizontal"
-                                android:padding="2dp"
+                                android:padding="4dp"
                                  />
 
 
@@ -57,9 +60,9 @@
                                 android:layout_height="wrap_content"
 
                                 android:text="AUTHOR"
-                                android:layout_marginStart="5dp"
-                                android:textColor="@color/colorOnPrimary"
 
+                                android:textColor="@color/colorOnPrimary"
+                                android:padding="4dp"
 
                                 />
 
@@ -85,12 +88,12 @@
 
 
 <RelativeLayout
-    android:layout_width="wrap_content"
+    android:layout_width="100dp"
     android:layout_gravity="top|end"
     android:layout_height="wrap_content">
     <View
         android:id="@+id/exshare"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_gravity="top|end"
         android:background="@drawable/share_btn_background"
 
@@ -100,10 +103,14 @@
 
         android:layout_width="wrap_content"
         android:textStyle="bold"
+        android:drawableEnd="@drawable/ic_share"
+        android:drawableTint="@color/white"
         android:textColor="@color/white"
-        android:text="SHARE"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="8dp"
+        android:text="SHARE "
+        android:textSize="18dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="6dp"
         android:layout_height="wrap_content"/>
 </RelativeLayout>
 

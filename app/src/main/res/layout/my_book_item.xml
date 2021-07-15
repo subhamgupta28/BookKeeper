@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="4dp"
+
     app:cardCornerRadius="8dp"
     app:cardElevation="12dp"
     android:id="@+id/mybookcard"
@@ -38,7 +39,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:padding="8dp"
             android:layout_gravity="bottom"
             android:orientation="vertical">
 
@@ -49,18 +50,19 @@
                    android:textStyle="bold"
                     android:text="TITLE"
                     android:textColor="@color/colorOnPrimary"
-                    android:layout_marginStart="5dp"
+
                     android:maxWidth="150dp"
                     android:scrollbars="horizontal"
-                    android:padding="2dp"
+                    android:padding="4dp"
                     />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/author"
-                android:layout_marginStart="5dp"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorOnPrimary"
                 android:text="AUTHOR"
+                android:padding="4dp"
 
 
                 />
@@ -72,12 +74,12 @@
         </LinearLayout>
 
 <RelativeLayout
-    android:layout_width="wrap_content"
+    android:layout_width="100dp"
     android:layout_gravity="top|end"
     android:layout_height="wrap_content">
     <View
         android:id="@+id/moremenu"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
 
         android:background="@drawable/share_btn_background"
 
@@ -88,15 +90,19 @@
         android:layout_width="wrap_content"
         android:textStyle="bold"
         android:textColor="@color/white"
-        android:text="MORE"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="8dp"
+        android:textSize="18dp"
+        android:drawableEnd="@drawable/ic_baseline_info"
+        android:text="MORE "
+       android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+       android:layout_marginEnd="6dp"
         android:layout_height="wrap_content"/>
 </RelativeLayout>
 
     <View
         android:id="@+id/anchor"
         android:layout_marginTop="30dp"
+
         android:background="#00E13453"
         android:layout_width="wrap_content"
         android:layout_height="2dp"/>

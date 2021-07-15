@@ -27,7 +27,13 @@
         android:enabled="false"
         android:icon="@drawable/ic_collapse"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/share"
+        android:title="Share"
 
+
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always" />
 
 
 </menu>

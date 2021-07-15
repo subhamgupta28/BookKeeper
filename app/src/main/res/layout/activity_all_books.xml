@@ -175,7 +175,15 @@
         app:navigationContentDescription="More"
 
         app:fabCradleMargin="4dp"/>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:id="@+id/progressup"
+        app:indeterminateAnimationType="disjoint"
 
+        app:indicatorColor="@color/colorPrimary"
+       android:visibility="gone"
+        android:layout_gravity="bottom"
+        android:layout_height="2dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/abfloatingbtn"
         android:layout_width="match_parent"

@@ -82,6 +82,8 @@ public class ExploreFrangments extends Fragment {
                 = new FirebaseRecyclerOptions.Builder<Model>()
                 .setQuery(databaseReference.orderByChild("PUBLISHED").equalTo(true), Model.class)
                 .build();
+
+
         myAdapter = new MyAdapter(options);
         recyclerView.setAdapter(myAdapter);
         myAdapter.startListening();
@@ -89,9 +91,7 @@ public class ExploreFrangments extends Fragment {
         checkBookAvailable();
     }
     long excount = 0;
-    public long exCount(){
-        return excount;
-    }
+
     public void checkBookAvailable(){
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -122,7 +122,7 @@ public class ExploreFrangments extends Fragment {
         });
     }
     public void search(String s){
-        Log.e("searchitem",s);
+        //Log.e("searchitem",s);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference1 = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child("PUBLISHED_BOOKS");
         FirebaseRecyclerOptions<Model> option

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,20 +28,26 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.ObservableSnapshotArray;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.Objects;
 
@@ -95,7 +102,7 @@ public class MyBooksFragment extends Fragment {
         networkStatsManager = (NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE);
         netStats();
 
-        swipeRefreshLayout.setOnRefreshListener(() -> getBook());
+        swipeRefreshLayout.setOnRefreshListener(this::getBook);
         getBook();
 
         return view;
@@ -105,6 +112,7 @@ public class MyBooksFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));
+        Log.e("snap", String.valueOf(databaseReference.get()));
         FirebaseRecyclerOptions<MyBookModel> options
                 = new FirebaseRecyclerOptions.Builder<MyBookModel>()
                 .setQuery(databaseReference, MyBookModel.class)
@@ -116,9 +124,7 @@ public class MyBooksFragment extends Fragment {
         checkBookAvailable();
     }
     long count = 0;
-    public long bCount(){
-        return count;
-    }
+
     public void checkBookAvailable(){
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -126,10 +132,10 @@ public class MyBooksFragment extends Fragment {
             public void onDataChange(@NonNull  DataSnapshot snapshot) {
                 count = snapshot.getChildrenCount();
                 Log.e("count", String.valueOf(count));
-                Object object = snapshot.getValue(Object.class);
-                String json = new Gson().toJson(object);
+//                Object object = snapshot.getValue(Object.class);
+                /*String json = new Gson().toJson(object);
                 //saveForOfflineReading(json);
-                Log.e("json",json);
+                Log.e("json",json);*/
                 if (!snapshot.exists()){
                     tvcheck.setText("No book available.\nCreate new book by clicking plus icon.");
                     progressBar.setVisibility(View.INVISIBLE);
@@ -150,40 +156,20 @@ public class MyBooksFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull  DatabaseError error) {
-
+                Log.e("Error",error.getDetails());
             }
         });
     }
-    public void saveForOfflineReading(String json){
-        try {
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    File.separator + "BookKeeper/");
-            if(!dir.exists())
-                dir.mkdir();
-            else{
-                File myFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                        File.separator + "SavedFile"+".txt");
-                myFile.createNewFile();
-                FileOutputStream fOut = new FileOutputStream(myFile);
-                OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-                myOutWriter.write(json);
-                myOutWriter.close();
-                fOut.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("err",e.getMessage());
-        }
 
-    }
     public void search(String s){
         Log.e("searchmybook",s);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(mAuth.getUid());
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));
         FirebaseRecyclerOptions<MyBookModel> options
                 = new FirebaseRecyclerOptions.Builder<MyBookModel>()
                 .setQuery(databaseReference.orderByChild("TITLE").startAt(s).endAt(s+"\u8fff"), MyBookModel.class)
                 .build();
+
         myBookAdapter = new MyBookAdapter(options);
         recyclerView.setAdapter(myBookAdapter);
         myBookAdapter.startListening();

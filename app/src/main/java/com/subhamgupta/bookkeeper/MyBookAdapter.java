@@ -2,42 +2,29 @@ package com.subhamgupta.bookkeeper;
 
 import android.content.Context;
 import android.content.Intent;
-
-import android.net.Uri;
 import android.os.Environment;
-import android.transition.Slide;
-import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.ProgressBar;
-
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,6 +47,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     StorageReference photoRef;
     FirebaseStorage firebaseStorage;
     StorageReference storageRef;
+    FirebaseUser user;
     DatabaseReference ref, ref2;
     MaterialAlertDialogBuilder alert;
 
@@ -70,6 +58,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         storageRef = FirebaseStorage.getInstance().getReference();
         ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
         ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -84,10 +73,12 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         holder.author.setText(myBookModel.getAUTHOR());
         holder.title.setText(myBookModel.getTITLE());
         holder.materialCardView.setOnClickListener(view -> nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(),myBookModel.getSYNC()));
-        holder.menu.setOnClickListener(view -> {
-            showMenu(holder, myBookModel);
-        });
+        holder.menu.setOnClickListener(view -> showMenu(holder, myBookModel));
 
+    }public void unpublish(MyBookAdapter.MyBookHolder holder, String key){
+        ref.child("PUBLISHED_BOOKS").child(key).removeValue()
+                .addOnFailureListener(e -> Toast.makeText(holder.imageView.getContext(), "Something went wrong", Toast.LENGTH_LONG).show())
+                .addOnSuccessListener(unused -> ref2.child(key).child("PUBLISHED").setValue(false).addOnSuccessListener(unused1 -> Toast.makeText(holder.imageView.getContext(), "Book is removed from explore section it is un published now", Toast.LENGTH_LONG).show()).addOnFailureListener(e -> Toast.makeText(holder.imageView.getContext(), "Something went wrong", Toast.LENGTH_LONG).show()));
     }
     public void showMenu(MyBookAdapter.MyBookHolder holder, MyBookModel myBookModel){
         ListPopupWindow listPopupWindow = new ListPopupWindow(holder.materialCardView.getContext(), null, R.attr.listPopupWindowStyle);
@@ -96,7 +87,10 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         list.add("SHARE");
         list.add("EDIT");
         list.add("BACK UP");
-        list.add("PUBLISH");
+        if (!myBookModel.isPUBLISHED())
+            list.add("PUBLISH");
+        else
+            list.add("UN PUBLISH");
         list.add("DELETE");
         ArrayAdapter adapter = new ArrayAdapter(holder.materialCardView.getContext(), R.layout.list_popup_item, list);
         listPopupWindow.setAdapter(adapter);
@@ -112,12 +106,14 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                     nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(), myBookModel.getSYNC());
                     break;
                 case 2:
-                    holder.backupprogress.setIndeterminate(true);
-                    holder.backupprogress.setVisibility(View.VISIBLE);
+
                     upload(holder, myBookModel.getKEY());
                     break;
                 case 3:
-                    showPopup(holder, myBookModel);
+                    if (myBookModel.isPUBLISHED())
+                        unpublish(holder, myBookModel.getKEY());
+                    else
+                        showPopup(holder, myBookModel);
                     break;
                 case 4:
                     popupdel(holder, myBookModel);
@@ -136,18 +132,20 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
         alert = new MaterialAlertDialogBuilder(holder.imageView.getContext());
         if (myBookModel.getFILELINK()==null){
-            alert.setMessage("Empty book cannot be published\nPlease write content and then try publishing");
-            alert.setNegativeButton("Dismiss", (dialogInterface, i) -> {
-
+            alert.setMessage("YOUR BOOK NEEDS TO BE BACKED UP BEFORE PUBLISHING\n" +
+                    "Your book may be empty or not backed up.");
+            alert.setNegativeButton("Backup", (dialogInterface, i) -> {
+                    upload(holder, myBookModel.getKEY());
             });
         }
         else {
             alert.setMessage("All the contents of this book belongs to you, and only you" +
-                    " and if the book contains any offensive, abusive, discriminating" +
-                    " content then it is your responsibility. And the we're not responsible for any of this.");
+                    " and if the book contains any offensive, abusive, discriminating content is forbidden, if" +
+                    " you publish this book then you are responsible for it." +
+                    "We don,t encourage you to publish the book which contains these things.");
             alert.setNegativeButton("Accept & post", (dialogInterface, i) -> {
                 if (myBookModel.getFILELINK()!=null){
-                    publishBook(myBookModel.getTITLE(), myBookModel.getIMAGELINK(), myBookModel.getAUTHOR(), myBookModel.getDESCRIPTION(), myBookModel.getKEY(), myBookModel.getFILELINK());
+                    publishBook(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getIMAGELINK(), myBookModel.getAUTHOR(), myBookModel.getDESCRIPTION(), myBookModel.getKEY(), myBookModel.getFILELINK());
                 }
 
             });
@@ -173,7 +171,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    private void publishBook(String title, String link, String author, String imname, String key,String filelink) {
+    private void publishBook(Context context, String title, String link, String author, String imname, String key, String filelink) {
         Query applesQuery = ref2.orderByChild("TITLE").equalTo(title);
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -190,12 +188,12 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                     ref.child("PUBLISHED_BOOKS").child(key).child("IMAGENAME").setValue(imname);
                     ref.child("PUBLISHED_BOOKS").child(key).child("PUBLISHED").setValue(true);
                     ref.child("PUBLISHED_BOOKS").child(key).child("FILELINK").setValue(filelink);
-                    ref2.child(appleSnapshot.getKey()).child("PUBLISHED").setValue(true).addOnSuccessListener(unused -> Log.e("published",ref.getKey())).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull  Exception e) {
-                            Log.e("failed", e.getMessage());
-                        }
-                    });
+                    ref2.child(appleSnapshot.getKey()).child("PUBLISHED").setValue(true)
+                            .addOnSuccessListener(unused -> {
+                                Log.e("published",ref.getKey());
+                                Toast.makeText(context, "Book Published",Toast.LENGTH_LONG).show();
+                            })
+                            .addOnFailureListener(e -> Log.e("failed", e.getMessage()));
                 }
             }
 
@@ -215,14 +213,14 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     @Override
     public MyBookHolder onCreateViewHolder(@NonNull  ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_book_item, parent, false);
-        return new MyBookAdapter.MyBookHolder(view);
+        return new MyBookHolder(view);
     }
     public void deleteBook(String link, String title, String key){
         Log.e("link",link+" kk");
         firebaseStorage = FirebaseStorage.getInstance();
         photoRef = firebaseStorage.getReferenceFromUrl(link);
         photoRef.delete().addOnSuccessListener(aVoid -> {
-            // File deleted successfully
+
             Log.d("DEL", "onSuccess: deleted file");
         }).addOnFailureListener(exception -> {
             // Uh-oh, an error occurred!
@@ -245,8 +243,11 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
                     appleSnapshot.getRef().removeValue();
+
                     Log.d("DEL", "onSuccess: deleted file");
                 }
+                deleteFromStorage(key);
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -260,6 +261,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                     appleSnapshot.getRef().removeValue();
                     Log.d("DEL", "onSuccess: deleted file");
                 }
+                deleteFromStorage(key);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -267,10 +269,16 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
             }
         });
     }
+    public void deleteFromStorage(String key){
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/BookKeeper/"+key+".json");
+        if (file.exists()) {
+            Log.e("File "+key+" deleted", String.valueOf(file.delete()));
+        }
+    }
 
-    public class MyBookHolder extends RecyclerView.ViewHolder {
+    public static class MyBookHolder extends RecyclerView.ViewHolder {
         TextView author;
-        TextView title, description;
+        TextView title;
         ImageView imageView;
 
         View menu, anchor;
@@ -278,7 +286,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
         MaterialCardView materialCardView;
         ProgressBar backupprogress;
-        View contextView;
+
 
         public MyBookHolder(@NonNull View itemView) {
             super(itemView);
@@ -319,6 +327,8 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
     }
     public void upload(MyBookAdapter.MyBookHolder holder, String key){
+        holder.backupprogress.setIndeterminate(true);
+        holder.backupprogress.setVisibility(View.VISIBLE);
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 File.separator + "BookKeeper/"+key+".json");
 
@@ -331,26 +341,23 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                     //stream = new FileInputStream(new File("/sdcard/BookKeeper/"+key+".json"));
                     stream = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                             File.separator + "/BookKeeper/"+key+".json"));
-                    UploadTask uploadTask = storageRef.child(key+".json").putStream(stream);
+                    UploadTask uploadTask = storageRef.child(user.getUid()+"/"+key+".json").putStream(stream);
                     uploadTask.addOnFailureListener(exception -> {
                         // Handle unsuccessful uploads
                         Log.d("error",exception.getMessage());
                     }).addOnSuccessListener(taskSnapshot -> {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                         // ...
-                        storageRef.child(key+".json").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                ref2.child(key).child("SYNC").setValue("Not");
-                                ref2.child(key).child("FILELINK").setValue(uri.toString()).addOnFailureListener(e -> {
-                                    Log.e("Error",e.getMessage());
-                                    holder.backupprogress.setVisibility(View.GONE);
-                                }).addOnSuccessListener(unused -> {
-                                    Log.e("File","Uploaded");
-                                    holder.backupprogress.setVisibility(View.GONE);
-                                    Toast.makeText(holder.menu.getContext(), "Backup Successful",Toast.LENGTH_LONG).show();
-                                });
-                            }
+                        storageRef.child(user.getUid()+"/"+key+".json").getDownloadUrl().addOnSuccessListener(uri -> {
+                            ref2.child(key).child("SYNC").setValue("Not");
+                            ref2.child(key).child("FILELINK").setValue(uri.toString()).addOnFailureListener(e -> {
+                                Log.e("Error",e.getMessage());
+                                holder.backupprogress.setVisibility(View.GONE);
+                            }).addOnSuccessListener(unused -> {
+                                Log.e("File","Uploaded");
+                                holder.backupprogress.setVisibility(View.GONE);
+                                Toast.makeText(holder.menu.getContext(), "Backup Successful",Toast.LENGTH_LONG).show();
+                            });
                         }).addOnFailureListener(e -> {
                             Log.e("Error",e.getMessage());
                             holder.backupprogress.setVisibility(View.GONE);

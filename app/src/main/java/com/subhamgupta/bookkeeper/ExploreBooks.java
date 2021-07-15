@@ -1,13 +1,7 @@
 package com.subhamgupta.bookkeeper;
 
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -19,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
@@ -54,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,14 +67,14 @@ public class ExploreBooks extends AppCompatActivity {
     ProgressBar progressBar;
     String title, author, url, key = "0";
     Map<String, String> contents;
-    String font, color, fileurl, jsonStr;
-    long  fontsize, currentpage, downloadID;
+    String  fileurl, jsonStr;
+
     int bgcolor = 0;
-    List<Long> keyset;
+
     JSONObject jsonObject;
     List<String> chapterss, desc;
     List<Long> pg;
-    Map<Long, Map<String, String>> map;
+
     RelativeLayout relativeLayout;
 
     @Override
@@ -264,7 +258,7 @@ public class ExploreBooks extends AppCompatActivity {
 
         if (file.isDirectory()) {
             String[] children = file.list();
-            for (int i = 0; i < children.length; i++) {
+            for (int i = 0; i < Objects.requireNonNull(children).length; i++) {
                 Log.e("files", children[i]);
                 new File(file, children[i]).delete();
             }

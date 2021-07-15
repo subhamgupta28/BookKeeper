@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
 
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
@@ -13,15 +13,15 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     app:cardElevation="8dp"
                     android:layout_margin="6dp"
                     app:cardCornerRadius="12dp"
-
+                    android:layout_gravity="center"
                     android:layout_height="wrap_content">
 
 
@@ -114,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-
+                    android:visibility="gone"
                     app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
                     app:icon="@drawable/ic_camera"
                     style="@style/Widget.App.Button.OutlinedButton.IconOnly"
@@ -141,4 +141,5 @@
 
             </LinearLayout>
         </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

@@ -1,33 +1,25 @@
 package com.subhamgupta.bookkeeper;
 
 
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.Manifest;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 import androidx.transition.ChangeBounds;
@@ -52,8 +45,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
@@ -62,26 +53,32 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,9 +89,13 @@ public class AllBooks extends AppCompatActivity  {
     private BottomAppBar bottomAppBar;
     private ViewPager2 viewPager2;
     private ImageView boimg;
+    ProgressBar progressup;
+    StorageReference storageRef;
+    DatabaseReference ref, ref2;
     private List<ReadBookModel> chap;
     private ReadBookAdapter readBookAdapter;
-
+    boolean writePermissionGranted = false;
+    boolean readPermissionGranted = false;
     private FloatingActionButton  additem;
     private MaterialCardView materialCardView;
     private String title, author, url, fileurl, key = "0";
@@ -115,13 +116,14 @@ public class AllBooks extends AppCompatActivity  {
     private ProgressBar progressBar;
     private MaterialCardView bottomlayout;
     private BottomSheetBehavior sheetBehavior;
-
+    int READ_REQUEST_CODE = 202;
+    int WRITE_REQUEST_CODE = 203;
     private EditText gotopage;
     private Button btngo, syncnow, synccancel;
     private long pgn;
     private String sync;
     MaterialCardView synclayout;
-    
+    FirebaseUser user;
 
 
     @Override
@@ -135,12 +137,13 @@ public class AllBooks extends AppCompatActivity  {
         abtitle = findViewById(R.id.abtitle);
         additem = findViewById(R.id.abfloatingbtn);
         text = findViewById(R.id.textv);
+        progressup = findViewById(R.id.progressup);
         boimg = findViewById(R.id.boimg);
         viewPager2 = findViewById(R.id.readbookrecycler);
         materialCardView = findViewById(R.id.li2);
         relativeLayout = findViewById(R.id.relativelayoutallbooks);
         //backup = findViewById(R.id.backup);
-
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         progressBar =findViewById(R.id.abloading);
         slider =findViewById(R.id.pageslider);
@@ -153,9 +156,62 @@ public class AllBooks extends AppCompatActivity  {
         syncnow =findViewById(R.id.syncnow);
         synccancel =findViewById(R.id.synccancel);
         progressBar.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() -> _init(),300);
+        requestForPermission();
+
+        new Handler().postDelayed(this::_init,300);
 
         
+    }
+    public void showPermissionDialog(){
+        MaterialAlertDialogBuilder madb = new MaterialAlertDialogBuilder(this);
+        madb.setTitle("Allow Permission");
+        madb.setMessage("Storage permission is needed for the better functionality of the app. " +
+                "Go to App info to allow permission.");
+        madb.setNegativeButton("Go to App info", (dialogInterface, i) -> {
+
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        });
+        madb.show();
+
+    }
+    public void requestForPermission(){
+        Log.e("Permission","requesting");
+        readPermissionGranted = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+        writePermissionGranted = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        boolean minSDK29 = Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q;
+        if (!readPermissionGranted)
+            ActivityCompat.requestPermissions(this,new String[]{"Manifest.permission.READ_EXTERNAL_STORAGE"}, READ_REQUEST_CODE);
+        if (!writePermissionGranted || !minSDK29)
+            ActivityCompat.requestPermissions(this,new String[]{"Manifest.permission.WRITE_EXTERNAL_STORAGE"}, WRITE_REQUEST_CODE);
+        if (!readPermissionGranted || !writePermissionGranted)
+            showPermissionDialog();
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        System.out.println("permission "+permissions+"\ngrant result "+ grantResults+"\nrequest code"+requestCode);
+        if (requestCode == READ_REQUEST_CODE) {
+            //requestPermission();
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permission was granted. Now you can call your method to open camera, fetch contact or whatever
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        if (requestCode==WRITE_REQUEST_CODE){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
     }
 
     public void showDemo(){
@@ -200,6 +256,7 @@ public class AllBooks extends AppCompatActivity  {
                     @Override
                     public void onSequenceFinish() {
                         // Yay
+
                         ss.setDemoAddBook(false);
                     }
 
@@ -229,10 +286,7 @@ public class AllBooks extends AppCompatActivity  {
         sheetBehavior = BottomSheetBehavior.from(bottomlayout);
 
 
-        bottomAppBar.setNavigationOnClickListener(view -> {
-
-            sheetBehavior.setState((sheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED)?BottomSheetBehavior.STATE_COLLAPSED:BottomSheetBehavior.STATE_EXPANDED);
-        });
+        bottomAppBar.setNavigationOnClickListener(view -> sheetBehavior.setState((sheetBehavior.getState()==BottomSheetBehavior.STATE_EXPANDED)?BottomSheetBehavior.STATE_COLLAPSED:BottomSheetBehavior.STATE_EXPANDED));
 
 
         CompositePageTransformer transformer = new CompositePageTransformer();
@@ -258,23 +312,8 @@ public class AllBooks extends AppCompatActivity  {
         else{
             setEmptyCard();
         }
-        syncnow.setOnClickListener(view -> {sync();});
-        /*IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        BroadcastReceiver onDownloadComplete = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //Fetching the download id received with the broadcast
+        syncnow.setOnClickListener(view -> sync());
 
-                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L);
-                //Checking if the received broadcast is for our enqueued download by matching download id
-                if (downloadID == id) {
-                    Log.e("File", "Downloaded");
-                    jsonStr = jsonHelper.readFile(key);
-                    setData(jsonStr);
-                }
-            }
-        };
-        registerReceiver(onDownloadComplete, filter);*/
         btngo.setOnClickListener(view -> {
             int pg = Integer.parseInt(gotopage.getText().toString());
             if(pg<=chap.size())
@@ -326,6 +365,7 @@ public class AllBooks extends AppCompatActivity  {
 
         MenuItem search = menu.findItem(R.id.booksearch);
         android.widget.SearchView searchView = (android.widget.SearchView) search.getActionView();
+        searchView.setMaxWidth(800);
         searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -339,18 +379,104 @@ public class AllBooks extends AppCompatActivity  {
                 return false;
             }
         });
+        MenuItem share = menu.findItem(R.id.share);
+        share.setOnMenuItemClickListener(menuItem -> {
+            share(fileurl);
+            return false;
+        });
         Log.e("menu_selected",menu.toString());
         return super.onCreateOptionsMenu(menu);
     }
-    /*public void downloadFile(Context context, String fileName, String url) {
-        DownloadManager downloadmanager = (DownloadManager) context.
-                getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(url);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
-        request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "/BookKeeper/"+fileName);
-        downloadID = downloadmanager.enqueue(request);
-    }*/
+    private void share( String link) {
+        if(link==null){
+            progressup.setIndeterminate(true);
+            progressup.setVisibility(View.VISIBLE);
+            setBackup();
+            upload(key);
+        }
+        else {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT,"Share Book");
+            intent.putExtra(Intent.EXTRA_TEXT,"Check out this book which i am reading now\nClick here "+link);
+            startActivity(Intent.createChooser(intent, "Share via"));
+        }
+
+
+    }
+
+    public void upload( String key){
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                File.separator + "BookKeeper/"+key+".json");
+
+
+        if (file.isFile())
+        {
+            storageRef = FirebaseStorage.getInstance().getReference();
+            ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
+            ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+            InputStream stream;
+            try {
+                //stream = new FileInputStream(new File("/sdcard/BookKeeper/"+key+".json"));
+                stream = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                        File.separator + "/BookKeeper/"+key+".json"));
+                UploadTask uploadTask = storageRef.child(user.getUid()+"/"+key+".json").putStream(stream);
+                uploadTask.addOnFailureListener(exception -> {
+                    // Handle unsuccessful uploads
+                    Log.d("error",exception.getMessage());
+                }).addOnSuccessListener(taskSnapshot -> {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    // ...
+                    progressup.setVisibility(View.GONE);
+                    storageRef.child(user.getUid()+"/"+key+".json").getDownloadUrl().addOnSuccessListener(uri -> {
+                        ref2.child(key).child("SYNC").setValue("Not");
+                        ref2.child(key).child("FILELINK").setValue(uri.toString()).addOnFailureListener(e -> {
+                            Log.e("Error",e.getMessage());
+
+                        }).addOnSuccessListener(unused -> {
+                            Log.e("File","Uploaded");
+
+                            Toast.makeText(this, "Sharing...",Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("text/plain");
+                            intent.putExtra(Intent.EXTRA_SUBJECT,"Share Book");
+                            intent.putExtra(Intent.EXTRA_TEXT,"Check out this book which i am reading now\nClick here "+uri.toString());
+                            startActivity(Intent.createChooser(intent, "Share via"));
+                        });
+                    }).addOnFailureListener(e -> {
+                        Log.e("Error",e.getMessage());
+                        progressup.setVisibility(View.GONE);
+                    });
+
+                    Log.e("onSuccess",taskSnapshot.getMetadata().getName());
+
+                }).addOnProgressListener(snapshot -> {
+                    double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    if (progress>1){
+                        progressup.setIndeterminate(false);
+
+                        progressup.setProgress((int)progress, true);
+                    }
+
+                });
+
+            } catch (FileNotFoundException e) {
+                Log.e("Error",e.getMessage());
+            }
+
+
+        }
+        else {
+
+            Log.e("file","not present");
+
+        }
+
+
+    }
+
+
     public void downloadFile( String filename,String url1){
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
@@ -413,7 +539,7 @@ public class AllBooks extends AppCompatActivity  {
                 new File(file, key+".json").delete();
             }
             downloadFile( key+".json", fileurl);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(FirebaseAuth.getInstance().getUid());
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
             ref.child(key).child("SYNC").setValue("synced").addOnSuccessListener(unused -> synclayout.setVisibility(View.GONE)).addOnFailureListener(e -> {
 
             });
@@ -442,8 +568,8 @@ public class AllBooks extends AppCompatActivity  {
         currentpage = viewPager2.getCurrentItem();
         jsonHelper.JsonCreateFile(title, author, url, key, map, font, color, fontsize, currentpage);
 
-        Snackbar.make(additem, "Saved", Snackbar.LENGTH_LONG)
-                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+        Snackbar.make(additem, "Saved to local storage", Snackbar.LENGTH_LONG)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
                 .setAnchorView(additem)
                 .show();
     }
@@ -477,12 +603,12 @@ public class AllBooks extends AppCompatActivity  {
 
         String uuid = new SharedSession(getApplicationContext()).getUuid();
         Log.e("uuid",uuid);
-        if (sync!=null){
-            if (sync.equals("Not"))
-                synclayout.setVisibility(View.VISIBLE);
-            else
-                synclayout.setVisibility(View.GONE);
-        }
+//        if (sync!=null){
+//            if (sync.equals("Not"))
+//                synclayout.setVisibility(View.VISIBLE);
+//            else
+//                synclayout.setVisibility(View.GONE);
+//        }
 
         chap = new ArrayList<>();
         contents = new HashMap<>();
@@ -567,16 +693,21 @@ public class AllBooks extends AppCompatActivity  {
             Log.e("pgn", String.valueOf(pgn));
             Log.e("chap", String.valueOf(chap.size()));
             Log.e("pg", String.valueOf(pg));
-            if (pg.get(0)==1){
-                slider.setValueFrom(0);
-            }
-            else{
-                slider.setValueFrom(1);
+            try {
+                if (pg.get(0)==1){
+                    slider.setValueFrom(0);
+                }
+                else{
+                    slider.setValueFrom(1);
 
+                }
+                //slider.setValueFrom(pg.get(0));
+                slider.setValueTo(chap.size());
+                slider.setValue(pg.get(0));
+            }catch (IndexOutOfBoundsException e){
+                e.printStackTrace();
             }
-            //slider.setValueFrom(pg.get(0));
-            slider.setValueTo(chap.size());
-            slider.setValue(pg.get(0));
+
             slider.addOnChangeListener((slider, value, fromUser) -> {
                 Log.e("slider", String.valueOf(value));
                 if (value<=chap.size())
@@ -592,18 +723,18 @@ public class AllBooks extends AppCompatActivity  {
 
     @Override
     public void onBackPressed() {
+        //setBackup();
+        //new Handler().postDelayed(() -> AllBooks.super.onBackPressed(), 200);
 
         alert = new MaterialAlertDialogBuilder(this);
 
         alert.setMessage("Save all tabs before exiting.");
 
-        alert.setNegativeButton("Exit", (dialogInterface, i) ->{
+        alert.setNegativeButton("Save & Exit", (dialogInterface, i) ->{
             setBackup();
             finish();
         });
-        alert.setPositiveButton("Cancel", (dialogInterface, i) -> {
-            Toast.makeText(getApplicationContext(),"Save Before Exiting",Toast.LENGTH_LONG).show();
-        });
+        alert.setPositiveButton("Exit", (dialogInterface, i) -> finish());
         alert.show();
     }
 

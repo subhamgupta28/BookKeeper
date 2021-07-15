@@ -10,7 +10,7 @@ public class SharedSession {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Context context;
-    private boolean darkTheme, lock, demoMain, demoAddBook;
+    private boolean darkTheme, lock, demoMain, demoAddBook, emailVerified;
     private String username;
     private String email;
     private String accountType;
@@ -30,6 +30,27 @@ public class SharedSession {
         editor.putString("acctype",accountType);
         editor.commit();
     }
+
+    public boolean isEmailVerified() {
+        emailVerified = sharedPreferences.getBoolean("emailVerified", false);
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+        editor.putBoolean("emailVerified", emailVerified);
+        editor.commit();
+    }
+
+    public String getEmail() {
+        email = sharedPreferences.getString("email","");
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Map<String, String> getData(){
         Map<String, String> data = new HashMap<>();
         data.put("username",sharedPreferences.getString("username","null"));

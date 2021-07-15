@@ -40,7 +40,7 @@ public class ExploreBookAdapter extends RecyclerView.Adapter<ExploreBookAdapter.
         return bookchap.size();
     }
 
-    public class ExploreBookHolder extends RecyclerView.ViewHolder{
+    public static class ExploreBookHolder extends RecyclerView.ViewHolder{
         TextView chapter, description, page;
         MaterialCardView materialCardView;
         public ExploreBookHolder(@NonNull View itemView) {

@@ -2,8 +2,8 @@ package com.subhamgupta.bookkeeper;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -11,17 +11,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -30,13 +31,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -56,32 +54,32 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     EditText btitle, bauthor;
-    MaterialButton btnimage, btnshow, btnupload;
+    MaterialButton btnimage, btnupload;
     ImageView setBookImg;
     ProgressBar progressBar;
     TextView imgtext;
-    private ViewPager viewPager2;
-    private TabLayout tabLayout;
+     ViewPager viewPager2;
+     TabLayout tabLayout;
     TextInputLayout textinputtitle, textinputauthor;
     private MyBooksFragment myBooksFragment;
     private ExploreFrangments exploreFrangments;
-    private FavouritesBookFragment favouritesBookFragment;
-    long myc = 0, exc = 0;
+
     private FirebaseAuth mAuth;
-    private BottomAppBar bottomAppBar;
+     BottomAppBar bottomAppBar;
     private SharedSession ss;
     MaterialAlertDialogBuilder logoutpopup;
-    private GoogleSignInAccount mGoogleSignInAccount;
+     GoogleSignInAccount mGoogleSignInAccount;
     FloatingActionButton floatingaddbook;
-    private FirebaseDatabase mDatabase;
+     FirebaseDatabase mDatabase;
     private DatabaseReference mReference;
     static StorageReference storageRef;
     static String title , author,bookref ;
@@ -94,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mReference = mDatabase.getReference("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         exploreFrangments = new ExploreFrangments();
         myBooksFragment = new MyBooksFragment();
-        favouritesBookFragment = new FavouritesBookFragment();
+
 
         tabLayout.setupWithViewPager(viewPager2);
         MainActivity.ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
@@ -122,14 +121,13 @@ public class MainActivity extends AppCompatActivity {
             Log.e("item",item.toString());
             return false;
         });
-
-
+        Log.e("authuuid",mAuth.getCurrentUser().getUid());
+//        if(!mAuth.getCurrentUser().isEmailVerified())
+//            Toast.makeText(this, "Your email is not verified.",Toast.LENGTH_LONG);
         floatingaddbook.setOnClickListener(view -> Show());
         bottomAppBar.setNavigationOnClickListener(view -> {
             logoutPop();
-            /*mAuth.signOut();
-            startActivity(new Intent(getApplicationContext(), LoginPage.class));
-            finish();*/
+
         });
         viewPager2.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -200,12 +198,12 @@ public class MainActivity extends AppCompatActivity {
             mAuth.signOut();
             ss.logOut();
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/BookKeeper/");
-
             if (file.isDirectory()) {
                 String[] children = file.list();
-                for (int i = 0; i < children.length; i++) {
-                    Log.e("files", children[i]);
-                    new File(file, children[i]).delete();
+                assert children != null;
+                for (String child : children) {
+                    //Log.e("files", child);
+                    new File(file, child).delete();
                 }
             }
             startActivity(new Intent(getApplicationContext(), LoginPage.class));
@@ -222,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         private List<String> fragmentstitle = new ArrayList<>();
         public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
-            Log.e("frag",fm.toString());
+            //Log.e("frag",fm.toString());
         }
         public void addFragments(Fragment fragment, String title){
             fragments.add(fragment);
@@ -232,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            Log.e("getitem", String.valueOf(position));
+            //Log.e("getitem", String.valueOf(position));
             return fragments.get(position);
         }
 
@@ -244,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            Log.e("getpagetitle",fragmentstitle.get(position));
+            //Log.e("getpagetitle",fragmentstitle.get(position));
             return fragmentstitle.get(position);
         }
     }
@@ -283,11 +281,26 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Please wait for book uploading", Toast.LENGTH_LONG).show();
 
         String filename = getFileName(data.getData());
-        StorageReference imagesRef = storageRef.child(filename);
+        StorageReference imagesRef = storageRef.child(mAuth.getUid()+"/"+filename);
         Uri file = data.getData();
+        int scaleDivider = 4;
+        byte[] downsizedImageBytes = new byte[1024];
+        try {
+            Bitmap fullBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), file);
+
+            // 2. Get the downsized image content as a byte[]
+            int scaleWidth = fullBitmap.getWidth() / scaleDivider;
+            int scaleHeight = fullBitmap.getHeight() / scaleDivider;
+            downsizedImageBytes =
+                    getDownsizedImageBytes(fullBitmap, scaleWidth, scaleHeight);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
         imagesRef.child("file/" + file.getLastPathSegment());
         View contextView = findViewById(android.R.id.content);
-        uploadTask = imagesRef.putFile(file);
+        //uploadTask = imagesRef.putFile(file);
+        uploadTask = imagesRef.putBytes(downsizedImageBytes);
         uploadTask.addOnFailureListener(exception -> {
 
             progressBar.setVisibility(View.GONE);
@@ -323,6 +336,17 @@ public class MainActivity extends AppCompatActivity {
             imgtext.setText("Wait for uploading "+p+" %");
 
         });
+    }
+    public byte[] getDownsizedImageBytes(Bitmap fullBitmap, int scaleWidth, int scaleHeight) throws IOException {
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(fullBitmap, scaleWidth, scaleHeight, true);
+
+        // 2. Instantiate the downsized image content as a byte[]
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] downsizedImageBytes = baos.toByteArray();
+
+        return downsizedImageBytes;
     }
     public String getFileName(Uri uri) {
         String result = null;
@@ -394,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
         imgtext = contactPopupView.findViewById(R.id.imgtext);
         textinputauthor = contactPopupView.findViewById(R.id.textinputauthor);
         textinputtitle = contactPopupView.findViewById(R.id.textinputtitle);
+
         btnupload.setEnabled(false);
         progressBar.setVisibility(View.GONE);
         setError();
@@ -410,6 +435,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+
         materialAlertDialogBuilder.setBackground(new ColorDrawable(Color.TRANSPARENT));
         materialAlertDialogBuilder.setView(contactPopupView).show();
 
@@ -419,6 +445,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
     public void setError(){
         btitle.addTextChangedListener(new TextWatcher() {
             @Override
@@ -484,11 +513,11 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        Log.e("menu_selected",menu.toString());
+        //Log.e("menu_selected",menu.toString());
         return super.onCreateOptionsMenu(menu);
     }
     public void  myInfo(){
-        Log.e("my","info");
+        //Log.e("my","info");
         startActivity(new Intent(getApplicationContext(), Settings.class));
     }
 

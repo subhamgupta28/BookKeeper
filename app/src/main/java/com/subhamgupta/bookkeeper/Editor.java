@@ -37,8 +37,8 @@ public class Editor extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
-        readSavedFile();
-        parseString();
+        //readSavedFile();
+
     }
 
     private void parseString() {
@@ -82,21 +82,26 @@ public class Editor extends AppCompatActivity {
     public void readSavedFile(){
         try {
             File yourFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "SavedFile"+".txt");
-            FileInputStream stream = new FileInputStream(yourFile);
-            String jsonStr = null;
-            try {
-                FileChannel fc = stream.getChannel();
-                MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            if (yourFile.exists()){
+                FileInputStream stream = new FileInputStream(yourFile);
+                String jsonStr = null;
+                try {
+                    FileChannel fc = stream.getChannel();
+                    MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
-                jsonStr = Charset.defaultCharset().decode(bb).toString();
-                Log.e("json",jsonStr);
-                jsonstr = jsonStr;
+                    jsonStr = Charset.defaultCharset().decode(bb).toString();
+                    Log.e("json",jsonStr);
+                    jsonstr = jsonStr;
+                    parseString();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    stream.close();
+                }
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
 
