@@ -49,6 +49,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 
@@ -104,11 +106,16 @@ public class MyBooksFragment extends Fragment {
 
         swipeRefreshLayout.setOnRefreshListener(this::getBook);
         getBook();
-
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+            Log.e( "onCreateView: ",dtf.format(now) );
+        }
         return view;
 
     }
     public void getBook(){
+
         mAuth = FirebaseAuth.getInstance();
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));

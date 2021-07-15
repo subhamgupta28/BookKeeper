@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getFileUrl(String imagename) {
 
-        storageRef.child(imagename).getDownloadUrl()
+        storageRef.child(mAuth.getUid()+"/"+imagename).getDownloadUrl()
                 .addOnSuccessListener(uri -> {
                     Uri url = Uri.parse(uri.toString());
                     //String name = filename.replaceAll("[^a-zA-Z0-9]", "");

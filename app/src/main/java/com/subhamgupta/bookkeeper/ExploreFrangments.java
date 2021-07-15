@@ -76,8 +76,10 @@ public class ExploreFrangments extends Fragment {
 
     }
     public void getBooks(){
+
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child("PUBLISHED_BOOKS");
+        checkBookAvailable();
         FirebaseRecyclerOptions<Model> options
                 = new FirebaseRecyclerOptions.Builder<Model>()
                 .setQuery(databaseReference.orderByChild("PUBLISHED").equalTo(true), Model.class)
@@ -98,6 +100,8 @@ public class ExploreFrangments extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 excount = snapshot.getChildrenCount();
+                for (DataSnapshot ds:snapshot.getChildren())
+                    Log.e("snapss", ds.getKey());
                 if (!snapshot.exists()){
                     tvcheck.setVisibility(View.VISIBLE);
                     tvcheck.setText("No Book Available.");
@@ -117,7 +121,7 @@ public class ExploreFrangments extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e( "onCancelled: ",error.getMessage() );
             }
         });
     }
