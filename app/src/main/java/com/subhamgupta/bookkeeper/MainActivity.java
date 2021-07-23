@@ -44,6 +44,8 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     static StorageReference storageRef;
     static String title , author,bookref ;
 
-
+    View contextView;
     private final int REQUEST_CODE = 1;
     static UploadTask uploadTask ;
 
@@ -96,12 +98,14 @@ public class MainActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mReference = mDatabase.getReference("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));
+        mReference.keepSynced(true);
         storageRef = FirebaseStorage.getInstance().getReference();
         mGoogleSignInAccount = GoogleSignIn.getLastSignedInAccount(this);
         bottomAppBar = findViewById(R.id.bottombar);
         setSupportActionBar(bottomAppBar);
         floatingaddbook = findViewById(R.id.floatingbtn);
         //Log.e("user",mAuth.getUid());
+        contextView = findViewById(android.R.id.content);
         viewPager2 = findViewById(R.id.viewpager);
         tabLayout = findViewById(R.id.tablayout);
 
@@ -115,13 +119,17 @@ public class MainActivity extends AppCompatActivity {
         //viewPagerAdapter.addFragments(favouritesBookFragment, "current");
         viewPagerAdapter.addFragments(myBooksFragment, "My books");
         viewPagerAdapter.addFragments(exploreFrangments, "Explore");
+
         viewPager2.setAdapter(viewPagerAdapter);
 
-        bottomAppBar.setOnMenuItemClickListener(item -> {
-            Log.e("item",item.toString());
-            return false;
-        });
-        Log.e("authuuid",mAuth.getCurrentUser().getUid());
+
+        MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
+        bottomBarBackground.setShapeAppearanceModel(
+                bottomBarBackground.getShapeAppearanceModel()
+                        .toBuilder()
+                        .setTopRightCorner(CornerFamily.ROUNDED,40)
+                        .setTopLeftCorner(CornerFamily.ROUNDED,40)
+                        .build());
 //        if(!mAuth.getCurrentUser().isEmailVerified())
 //            Toast.makeText(this, "Your email is not verified.",Toast.LENGTH_LONG);
         floatingaddbook.setOnClickListener(view -> Show());
@@ -264,31 +272,49 @@ public class MainActivity extends AppCompatActivity {
             btnupload.setEnabled(true);
             setBookImg.setImageURI(data.getData());
 
-            btnupload.setOnClickListener(view -> uploadingfile(data));
+            btnupload.setOnClickListener(view -> {
+                title = btitle.getText().toString();
+                author = bauthor.getText().toString();
+
+                if (title.isEmpty() && author.isEmpty() || title.isEmpty() || author.isEmpty()){
+                    textinputtitle.setError("This can't be empty");
+                    textinputauthor.setError("This can't be empty");
+
+                }
+                else {
+                    textinputtitle.setError(null);
+                    textinputauthor.setError(null);
+                    uploadingfile(data);
+                }
+            });
 
         }
         else {
-            Toast.makeText(getApplicationContext(), "No file choosen", Toast.LENGTH_SHORT).show();
-
+            Snackbar.make(contextView, "No Image Chosen", Snackbar.LENGTH_LONG)
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                    .setAnchorView(floatingaddbook)
+                    .show();
         }
     }
     public void uploadingfile(@Nullable Intent data){
-
+        btnupload.setEnabled(false);
+        btnimage.setEnabled(false);
         //progressDialog.show();
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
 
-        Toast.makeText(getApplicationContext(), "Please wait for book uploading", Toast.LENGTH_LONG).show();
-
+        Snackbar.make(contextView, "Wait for image upload.", Snackbar.LENGTH_LONG)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                .setAnchorView(floatingaddbook)
+                .show();
         String filename = getFileName(data.getData());
         StorageReference imagesRef = storageRef.child(mAuth.getUid()+"/"+filename);
         Uri file = data.getData();
-        int scaleDivider = 4;
+        int scaleDivider = 2;
         byte[] downsizedImageBytes = new byte[1024];
         try {
             Bitmap fullBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), file);
-
-            // 2. Get the downsized image content as a byte[]
+            Log.e("filename",file.toString());
             int scaleWidth = fullBitmap.getWidth() / scaleDivider;
             int scaleHeight = fullBitmap.getHeight() / scaleDivider;
             downsizedImageBytes =
@@ -298,8 +324,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         imagesRef.child("file/" + file.getLastPathSegment());
-        View contextView = findViewById(android.R.id.content);
-        //uploadTask = imagesRef.putFile(file);
+
         uploadTask = imagesRef.putBytes(downsizedImageBytes);
         uploadTask.addOnFailureListener(exception -> {
 
@@ -314,12 +339,12 @@ public class MainActivity extends AppCompatActivity {
         }).addOnSuccessListener(taskSnapshot -> {
 
             progressBar.setVisibility(View.GONE);
-            btnupload.setEnabled(false);
+
             btnimage.setEnabled(true);
 
             setBookImg.setImageResource(R.drawable.icon);
             getFileUrl(filename);
-            Snackbar.make(contextView, "Book uploaded", Snackbar.LENGTH_LONG)
+            Snackbar.make(contextView, "Image uploaded", Snackbar.LENGTH_LONG)
                     .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
                     .setAnchorView(floatingaddbook)
                     .show();
@@ -338,10 +363,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     public byte[] getDownsizedImageBytes(Bitmap fullBitmap, int scaleWidth, int scaleHeight) throws IOException {
-
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(fullBitmap, scaleWidth, scaleHeight, true);
-
-        // 2. Instantiate the downsized image content as a byte[]
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] downsizedImageBytes = baos.toByteArray();
@@ -387,7 +409,10 @@ public class MainActivity extends AppCompatActivity {
                         mReference.child(id).child("IMAGENAME").setValue(imagename);
                         mReference.child(id).child("IMAGELINK").setValue(url.toString())
                                 .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getApplicationContext(), "Book Succecfully Created", Toast.LENGTH_LONG).show();
+                                    Snackbar.make(contextView, "Book Created", Snackbar.LENGTH_LONG)
+                                            .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                                            .setAnchorView(floatingaddbook)
+                                            .show();
                                     btitle.setText("");
                                     imgtext.setText("");
                                     bauthor.setText("");
@@ -396,10 +421,15 @@ public class MainActivity extends AppCompatActivity {
                                     btnupload.setEnabled(false);
                                     btnimage.setEnabled(true);
                                 })
-                                .addOnFailureListener(e -> Log.d("Saved", e.toString()));
+                                .addOnFailureListener(e ->{
+                                    btnupload.setEnabled(true);
+                                    btnimage.setEnabled(true);
+                                    Log.d("Saved", e.toString());
+                                } );
 
                 }).addOnFailureListener(e -> {
-
+                    btnupload.setEnabled(true);
+                    btnimage.setEnabled(true);
                 });
     }
 
@@ -422,18 +452,7 @@ public class MainActivity extends AppCompatActivity {
         btnupload.setEnabled(false);
         progressBar.setVisibility(View.GONE);
         setError();
-        btnimage.setOnClickListener(view -> {
-            title = btitle.getText().toString();
-            author = bauthor.getText().toString();
-
-            if (title.isEmpty() && author.isEmpty() || title.isEmpty() || author.isEmpty()){
-                Toast.makeText(getApplicationContext(),"Enter Title and Author Name",Toast.LENGTH_LONG).show();
-            }
-            else {
-                addBook();
-            }
-
-        });
+        btnimage.setOnClickListener(view -> addBook());
 
 
         materialAlertDialogBuilder.setBackground(new ColorDrawable(Color.TRANSPARENT));
@@ -463,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.toString().isEmpty())
-                    textinputtitle.setError("This can't be set empty");
+                    textinputtitle.setError("This can't be empty");
                 else
                     textinputtitle.setError(null);
             }
@@ -482,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.toString().isEmpty())
-                    textinputauthor.setError("This can't be set empty");
+                    textinputauthor.setError("This can't be empty");
                 else
                     textinputauthor.setError(null);
             }
@@ -500,16 +519,25 @@ public class MainActivity extends AppCompatActivity {
         });
         MenuItem item = menu.findItem(R.id.appsearch);
         SearchView searchView = (SearchView) item.getActionView();
+        searchView.setMaxWidth(600);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                searchBook(s);
+                try {
+                    searchBook(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                searchBook(s);
+                try {
+                    searchBook(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return false;
             }
         });
@@ -522,7 +550,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int pos = 0;
-    private void searchBook(String s) {
+    private void searchBook(String s) throws Exception {
         if (pos==0){
             if (!s.isEmpty())
                 myBooksFragment.search(s);

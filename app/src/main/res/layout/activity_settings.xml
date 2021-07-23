@@ -189,6 +189,13 @@
     android:layout_margin="12dp"
     android:text="More settings comming soon : )"
     android:layout_height="wrap_content"/>
-
+<com.google.android.material.button.MaterialButton
+    android:id="@+id/shareapp"
+    android:layout_gravity="end"
+    android:layout_margin="16dp"
+    android:textColor="@color/white"
+    android:text="share app"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
 
 </LinearLayout>

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -103,9 +104,20 @@ public class MyBooksFragment extends Fragment {
 
         networkStatsManager = (NetworkStatsManager) getActivity().getSystemService(Context.NETWORK_STATS_SERVICE);
         netStats();
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            try {
+                getBook();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
-        swipeRefreshLayout.setOnRefreshListener(this::getBook);
-        getBook();
+        try {
+
+            getBook();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
@@ -114,7 +126,10 @@ public class MyBooksFragment extends Fragment {
         return view;
 
     }
-    public void getBook(){
+
+
+
+    public void getBook() throws Exception{
 
         mAuth = FirebaseAuth.getInstance();
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
@@ -126,13 +141,14 @@ public class MyBooksFragment extends Fragment {
                 .build();
         myBookAdapter = new MyBookAdapter(options);
         recyclerView.setAdapter(myBookAdapter);
+        Log.e("ccc", String.valueOf(myBookAdapter.getItemCount()));
         myBookAdapter.startListening();
         swipeRefreshLayout.setRefreshing(false);
         checkBookAvailable();
     }
     long count = 0;
 
-    public void checkBookAvailable(){
+    public void checkBookAvailable() throws Exception{
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -159,6 +175,8 @@ public class MyBooksFragment extends Fragment {
 
 
                 }
+                if (count==0)
+                    netStatus.setVisibility(View.GONE);
             }
 
             @Override
@@ -168,8 +186,9 @@ public class MyBooksFragment extends Fragment {
         });
     }
 
-    public void search(String s){
+    public void search(String s) throws Exception{
         Log.e("searchmybook",s);
+
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(mAuth.getUid()));
         FirebaseRecyclerOptions<MyBookModel> options
@@ -180,6 +199,7 @@ public class MyBooksFragment extends Fragment {
         myBookAdapter = new MyBookAdapter(options);
         recyclerView.setAdapter(myBookAdapter);
         myBookAdapter.startListening();
+
 
 
 

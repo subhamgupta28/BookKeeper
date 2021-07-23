@@ -66,20 +66,31 @@ public class ExploreFrangments extends Fragment {
         loadingview = view.findViewById(R.id.exloadingview);
         exnetStatus.setVisibility(View.GONE);
         //progressBar.setVisibility(View.VISIBLE);
+
         netStat();
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
 
-        swipeRefreshLayout.setOnRefreshListener(this::getBooks);
-        getBooks();
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            try {
+                getBooks();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        try {
+
+            getBooks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return view;
 
     }
-    public void getBooks(){
-
+    public void getBooks() throws Exception{
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child("PUBLISHED_BOOKS");
-        checkBookAvailable();
         FirebaseRecyclerOptions<Model> options
                 = new FirebaseRecyclerOptions.Builder<Model>()
                 .setQuery(databaseReference.orderByChild("PUBLISHED").equalTo(true), Model.class)
@@ -88,13 +99,14 @@ public class ExploreFrangments extends Fragment {
 
         myAdapter = new MyAdapter(options);
         recyclerView.setAdapter(myAdapter);
+
         myAdapter.startListening();
         swipeRefreshLayout.setRefreshing(false);
         checkBookAvailable();
     }
     long excount = 0;
 
-    public void checkBookAvailable(){
+    public void checkBookAvailable() throws Exception{
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -117,6 +129,8 @@ public class ExploreFrangments extends Fragment {
                     exnetStatus.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
                 }
+                if (excount==0)
+                    exnetStatus.setVisibility(View.GONE);
             }
 
             @Override
@@ -125,7 +139,7 @@ public class ExploreFrangments extends Fragment {
             }
         });
     }
-    public void search(String s){
+    public void search(String s) throws Exception{
         //Log.e("searchitem",s);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         databaseReference1 = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child("PUBLISHED_BOOKS");

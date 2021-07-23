@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +51,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,7 +86,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+@Keep
 public class AllBooks extends AppCompatActivity  {
     private TextView abtitle, abauthor, text;
     private BottomAppBar bottomAppBar;
@@ -144,10 +147,19 @@ public class AllBooks extends AppCompatActivity  {
         relativeLayout = findViewById(R.id.relativelayoutallbooks);
         //backup = findViewById(R.id.backup);
         user = FirebaseAuth.getInstance().getCurrentUser();
-
+        MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
+        bottomBarBackground.setShapeAppearanceModel(
+                bottomBarBackground.getShapeAppearanceModel()
+                        .toBuilder()
+                        .setTopRightCorner(CornerFamily.ROUNDED,40)
+                        .setTopLeftCorner(CornerFamily.ROUNDED,40)
+                        .build());
         progressBar =findViewById(R.id.abloading);
         slider =findViewById(R.id.pageslider);
         bottomlayout =findViewById(R.id.bottomsheetlayout);
+        File fl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/Buffer/");
+        if(!fl.exists())
+            fl.mkdir();
 
 
         gotopage =findViewById(R.id.gotopage);
@@ -365,7 +377,7 @@ public class AllBooks extends AppCompatActivity  {
 
         MenuItem search = menu.findItem(R.id.booksearch);
         android.widget.SearchView searchView = (android.widget.SearchView) search.getActionView();
-        searchView.setMaxWidth(800);
+        searchView.setMaxWidth(600);
         searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -584,7 +596,7 @@ public class AllBooks extends AppCompatActivity  {
             slider.setValueFrom(1);
             slider.setValue(po+1);
             slider.setValueTo(chap.size());
-
+            //readBookAdapter.setFromBuffer();
         });
         /*for (int childCount = viewPager2.getChildCount(), i = 0; i < childCount; ++i) {
             final ViewHolder holder = viewPager2.getChildViewHolder(recyclerView.getChildAt(i));

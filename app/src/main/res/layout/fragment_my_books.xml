@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MyBooksFragment">
+
     <TextView
         android:id="@+id/mynetstatus"
         android:layout_width="match_parent"
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mynetstatus"
         android:indeterminate="true"
+
         app:indicatorColor="@color/colorRed"
         android:visibility="gone"
         app:indeterminateAnimationType="disjoint" />
@@ -31,13 +33,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/progress"
+
             android:id="@+id/swipemybooks">
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mybookrecycler"
                 android:layoutAnimation="@anim/recycler_animator"
-                android:padding="2dp"
+                android:padding="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

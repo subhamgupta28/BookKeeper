@@ -2,6 +2,9 @@ package com.subhamgupta.bookkeeper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -58,6 +62,8 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         storageRef = FirebaseStorage.getInstance().getReference();
         ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
         ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        ref2.keepSynced(true);
+
         user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -70,6 +76,11 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .centerCrop()
                 .into(holder.imageView);
+
+        /*Drawable unwrappedDrawable = holder.menu.getBackground();
+        Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#121212"));*/
+
         holder.author.setText(myBookModel.getAUTHOR());
         holder.title.setText(myBookModel.getTITLE());
         holder.materialCardView.setOnClickListener(view -> nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(),myBookModel.getSYNC()));
@@ -121,8 +132,6 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
             }
             listPopupWindow.dismiss();
-            Log.e("l", String.valueOf(l));
-            Log.e("i", String.valueOf(i));
         });
 
         listPopupWindow.show();
@@ -134,9 +143,10 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         if (myBookModel.getFILELINK()==null){
             alert.setMessage("YOUR BOOK NEEDS TO BE BACKED UP BEFORE PUBLISHING\n" +
                     "Your book may be empty or not backed up.");
-            alert.setNegativeButton("Backup", (dialogInterface, i) -> {
+            alert.setPositiveButton("Backup", (dialogInterface, i) -> {
                     upload(holder, myBookModel.getKEY());
             });
+
         }
         else {
             alert.setMessage("All the contents of this book belongs to you, and only you" +
@@ -236,7 +246,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                 .getReference()
                 .child("BOOKDATA")
                 .child("PUBLISHED_BOOKS");
-        Query applesQuery = ref.orderByChild("TITLE").equalTo(title);
+        Query applesQuery = ref.orderByChild("KEY").equalTo(key);
         Query ref2query = ref2.orderByChild("KEY").equalTo(key);
         applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -14,14 +14,21 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:id="@+id/mca"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="4dp"
            android:layout_marginBottom="2dp"
-           app:cardCornerRadius="0dp"
+           app:cardCornerRadius="8dp"
             app:cardElevation="12dp"
             android:layout_height="wrap_content">
 
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tablayout"
+            app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
+            android:hapticFeedbackEnabled="true"
+            app:tabIndicatorHeight="3dp"
+            app:tabGravity="center"
 
             android:layout_width="match_parent"
             app:tabIndicatorAnimationMode="elastic"
@@ -39,28 +46,32 @@
             android:layout_height="wrap_content"/>
 
     </RelativeLayout>
+
+
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottombar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
 
-        style="@style/Widget.MaterialComponents.BottomAppBar"
-        app:fabAlignmentMode="center"
+        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+
+        app:fabAlignmentMode="end"
         app:fabAnimationMode="slide"
         app:elevation="24dp"
-
+        app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
         app:menu="@menu/bottomappbar"
         app:navigationIcon="@drawable/ic_logout"
         app:navigationContentDescription="Logout"
         app:hideOnScroll="true"
+        app:fabCradleRoundedCornerRadius="12dp"
         app:fabCradleMargin="4dp"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingbtn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
-
         app:fabSize="auto"
         app:layout_anchor="@id/bottombar"/>
 

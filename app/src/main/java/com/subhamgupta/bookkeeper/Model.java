@@ -1,20 +1,26 @@
 package com.subhamgupta.bookkeeper;
 
-public class Model {
-     private String TITLE;
-     private String AUTHOR;
-     private String IMAGELINK;
-     private String BOOKREF;
-     private String IMAGENAME;
-     private String DESCRIPTION;
-     private String KEY;
-     private String FILELINK;
-     private long RATINGS;
-     private int RATING_COUNT;
-     private boolean PUBLISHED;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public class Model implements Serializable {
+
+    String TITLE;
+    String AUTHOR;
+    String IMAGELINK;
+    String BOOKREF;
+    String IMAGENAME;
+    String DESCRIPTION;
+    String KEY;
+    String FILELINK;
+    long RATINGS;
+    int RATING_COUNT;
+    boolean PUBLISHED;
+    private Date time;
 
 
-    public Model(String TITLE, String AUTHOR, String IMAGELINK,
+    Model(String TITLE, String AUTHOR, String IMAGELINK,
                  String BOOKREF, String IMAGENAME, String DESCRIPTION,
                  String KEY, long RATINGS, int RATING_COUNT)
     {
@@ -29,7 +35,7 @@ public class Model {
         this.RATING_COUNT = RATING_COUNT;
     }
 
-    public Model(){
+    Model(){
 
     }
 

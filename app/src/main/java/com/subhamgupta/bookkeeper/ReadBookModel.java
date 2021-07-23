@@ -1,13 +1,19 @@
 package com.subhamgupta.bookkeeper;
 
-import android.text.Spannable;
 
-public class ReadBookModel {
-    private String chapter;
-    private String description;
-    private long pageNo;
+import java.io.Serializable;
+import java.util.Date;
 
-    public ReadBookModel(String chapter, String description, long pageNo) {
+public class ReadBookModel implements Serializable {
+     String chapter;
+     String description;
+     long pageNo;
+     private Date date;
+
+     ReadBookModel() {
+    }
+
+    ReadBookModel(String chapter, String description, long pageNo) {
         this.chapter = chapter;
         this.description = description;
         this.pageNo = pageNo;

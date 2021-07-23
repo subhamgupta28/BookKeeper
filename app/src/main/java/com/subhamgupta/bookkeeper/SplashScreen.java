@@ -1,8 +1,10 @@
 package com.subhamgupta.bookkeeper;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,14 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class SplashScreen extends AppCompatActivity {
     ImageView imageView;
     TextView splashtext;
     private FirebaseAuth mAuth;
+    int MY_REQUEST_CODE =200;
     SharedSession sharedSession;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,11 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -61,6 +71,8 @@ public class SplashScreen extends AppCompatActivity {
         }, 3000);
 
     }
+
+
     public void LoginAvtivity(){
         Intent intent = new Intent(getApplicationContext(), LoginPage.class);
         startActivity(intent);

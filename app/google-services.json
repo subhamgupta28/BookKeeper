@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "71180029614-36gbsebtcn07c37blun3j7e8npbmj8fl.apps.googleusercontent.com",
+          "client_id": "71180029614-0sr5qgfhd7t6smb6dir5kf2r80tf982b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.subhamgupta.bookkeeper",
-            "certificate_hash": "0f796e63132cccfe272c6ef3bab4b7dbaf4855db"
+            "certificate_hash": "ab910db70da273a9590a3e6aa8bb154f9b8d8f61"
+          }
+        },
+        {
+          "client_id": "71180029614-i6cra1s4tmdoe9sun23lhku3ggafpcfn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.subhamgupta.bookkeeper",
+            "certificate_hash": "853eafb27c00c0ee1c32045c7a663f38f7a482b8"
           }
         },
         {

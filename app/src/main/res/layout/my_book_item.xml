@@ -3,26 +3,30 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="160dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="4dp"
+    android:layout_margin="3dp"
 
     app:cardCornerRadius="8dp"
-    app:cardElevation="12dp"
+    app:cardElevation="20dp"
     android:id="@+id/mybookcard"
     android:clickable="true"
     android:focusable="true">
-    <ImageView
-        android:id="@+id/bimage"
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:scaleType="centerCrop"
-        android:foreground="@drawable/img_fade"
-        tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/bimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:scaleType="centerCrop"
+            android:foreground="@drawable/img_fade"
+            tools:srcCompat="@tools:sample/avatars" />
+
+
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/backupprogress"
         android:layout_width="match_parent"
-        app:trackThickness="170dp"
+        app:trackThickness="160dp"
         app:trackColor="#0029B6F6"
         app:indicatorColor="#6081D4FA"
         app:trackCornerRadius="8dp"

@@ -4,6 +4,8 @@ package com.subhamgupta.bookkeeper;
 import android.os.Environment;
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,7 +28,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-
+@Keep
 public class JsonHelper {
     String title, author, key = "0";
     private Map pages;
@@ -47,7 +49,9 @@ public class JsonHelper {
 
     public JsonHelper() {
         storageRef = FirebaseStorage.getInstance().getReference();
-
+        File fl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/BookKeeper/");
+        if(!fl.exists())
+            fl.mkdir();
     }
 
 
@@ -131,6 +135,8 @@ public class JsonHelper {
 
         try {
             File yourFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "/Shared Books/" + key + ".json");
+            if (!yourFile.exists())
+                yourFile.mkdir();
             FileInputStream stream = new FileInputStream(yourFile);
             String jsonStr;
             try {

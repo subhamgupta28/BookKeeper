@@ -1,26 +1,29 @@
 package com.subhamgupta.bookkeeper;
 
-public class MyBookModel {
-    private String TITLE;
-    private String AUTHOR;
-    private String IMAGELINK;
-    private String BOOKREF;
-    private String IMAGENAME;
-    private String DESCRIPTION;
+import java.io.Serializable;
+import java.util.Date;
 
+public class MyBookModel implements Serializable {
 
-    private String KEY;
-    private String EMAIL;
-    private String SYNC;
-    private String FILELINK;
-    private long RATINGS;
-    private int RATING_COUNT;
-    private boolean PUBLISHED;
+    String TITLE;
+    String AUTHOR;
+    String IMAGELINK;
+    String BOOKREF;
+    String IMAGENAME;
+    String DESCRIPTION;
+    String KEY;
+    String EMAIL;
+    String SYNC;
+    String FILELINK;
+    long RATINGS;
+    int RATING_COUNT;
+    boolean PUBLISHED;
+    Date time;
 
-    public MyBookModel() {
+    MyBookModel() {
     }
 
-    public MyBookModel(String TITLE, String AUTHOR, String IMAGELINK,
+    MyBookModel(String TITLE, String AUTHOR, String IMAGELINK,
                        String BOOKREF, String IMAGENAME, String DESCRIPTION,
                        String KEY, String EMAIL, String SYNC, String FILELINK,
                        long RATINGS, int RATING_COUNT, boolean PUBLISHED)

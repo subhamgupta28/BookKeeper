@@ -3,6 +3,7 @@ package com.subhamgupta.bookkeeper;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,6 +61,7 @@ public class LoginPage extends AppCompatActivity {
     CoordinatorLayout relativeLayout;
     AnimationDrawable animationDrawable;
     FirebaseUser user;
+    String api_key = "71180029614-i6cra1s4tmdoe9sun23lhku3ggafpcfn.apps.googleusercontent.com";
     boolean writePermissionGranted = false;
     boolean readPermissionGranted = false;
     MaterialCardView materialCardView;
@@ -95,10 +97,10 @@ public class LoginPage extends AppCompatActivity {
         progressBar = findViewById(R.id.logprogress);
         tilpass = findViewById(R.id.textpass);
 
-        /*animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
-        animationDrawable.setEnterFadeDuration(2000);
-        animationDrawable.setExitFadeDuration(4000);
-        animationDrawable.start();*/
+//        animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
+//        animationDrawable.setEnterFadeDuration(2000);
+//        animationDrawable.setExitFadeDuration(4000);
+//        animationDrawable.start();
 
 
         sharedSession = new SharedSession(getApplicationContext());
@@ -117,7 +119,7 @@ public class LoginPage extends AppCompatActivity {
             }
         }
 
-
+        //materialCardView.setCardBackgroundColor(Color.TRANSPARENT);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -137,9 +139,7 @@ public class LoginPage extends AppCompatActivity {
             lockedcard.setVisibility(View.GONE);
         btgsignin.setOnClickListener(view -> {
             progressBar.setVisibility(View.VISIBLE);
-            btcreate.setEnabled(false);
-            btlogin.setEnabled(false);
-            btgsignin.setEnabled(false);
+            buttonDisable();
             sharedSession.setData(etpass.getText().toString(), etemail.getText().toString(), "google");
             signInGoogle();
 
@@ -147,18 +147,14 @@ public class LoginPage extends AppCompatActivity {
         });
         btlogin.setOnClickListener(view -> {
             progressBar.setVisibility(View.VISIBLE);
-            btlogin.setEnabled(false);
-            btcreate.setEnabled(false);
-            btgsignin.setEnabled(false);
+            buttonDisable();
             sharedSession.setData(etpass.getText().toString(), etemail.getText().toString(), "email");
             emailLogIn();
 
         });
         btcreate.setOnClickListener(view -> {
             progressBar.setVisibility(View.VISIBLE);
-            btlogin.setEnabled(false);
-            btgsignin.setEnabled(false);
-            btcreate.setEnabled(false);
+            buttonDisable();
             sharedSession.setData(etpass.getText().toString(), etemail.getText().toString(), "email");
             signInEmail();
         });
@@ -213,7 +209,7 @@ public class LoginPage extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("LOGIN", "Email sent.");
-                            Toast.makeText(this, "Password Email is sent to " + email, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Password Change Email is sent to " + email, Toast.LENGTH_LONG).show();
                         }
                     });
         }
@@ -285,9 +281,7 @@ public class LoginPage extends AppCompatActivity {
                     Toast.makeText(this,"Sign in failed"+e.getMessage(), Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.INVISIBLE);
                     Log.e("err",e.getMessage());
-                    btcreate.setEnabled(true);
-                    btlogin.setEnabled(true);
-                    btgsignin.setEnabled(true);
+                    buttonEnable();
                     // ...
                 }
             }
@@ -313,9 +307,7 @@ public class LoginPage extends AppCompatActivity {
                         //Log.e("Failed",task.getException().toString());
                         progressBar.setVisibility(View.INVISIBLE);
                         //updateUI(null);
-                        btcreate.setEnabled(true);
-                        btlogin.setEnabled(true);
-                        btgsignin.setEnabled(true);
+                        buttonEnable();
                     }
 
 
@@ -331,18 +323,14 @@ public class LoginPage extends AppCompatActivity {
         startActivity(intent);
 
         finish();
-        btcreate.setEnabled(true);
-        btlogin.setEnabled(true);
-        btgsignin.setEnabled(true);
+        buttonEnable();
     }
     public void emailLogIn(){
         String email = etemail.getText().toString(), pass = etpass.getText().toString();
         if (email.isEmpty() || pass.isEmpty()){
             Toast.makeText(getApplicationContext(), "Enter Credentials", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.INVISIBLE);
-            btcreate.setEnabled(true);
-            btlogin.setEnabled(true);
-            btgsignin.setEnabled(true);
+            buttonEnable();
         }
         else {
             mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this, task -> {
@@ -353,9 +341,7 @@ public class LoginPage extends AppCompatActivity {
                     assert user != null;
                     if(!user.isEmailVerified()){
                         user.sendEmailVerification();
-                        btcreate.setEnabled(true);
-                        btlogin.setEnabled(true);
-                        btgsignin.setEnabled(true);
+                        buttonEnable();
                         Toast.makeText(getApplicationContext(), "Verification link is sent to "+email+" verify to login",Toast.LENGTH_LONG).show();
                     }else {
                         Toast.makeText(getApplicationContext(), "Login Successful",Toast.LENGTH_LONG).show();
@@ -369,18 +355,14 @@ public class LoginPage extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(this, "Wrong email or password", Toast.LENGTH_LONG).show();
-                    btcreate.setEnabled(true);
-                    btlogin.setEnabled(true);
-                    btgsignin.setEnabled(true);
+                    buttonEnable();
                 }
 
 
             }).addOnFailureListener(e -> {
                 Log.e("onfail", e.getMessage());
                 progressBar.setVisibility(View.INVISIBLE);
-                btcreate.setEnabled(true);
-                btlogin.setEnabled(true);
-                btgsignin.setEnabled(true);
+                buttonEnable();
                 //tilpass.setError("Wrong Password or Email");
 
                 //Toast.makeText(getApplicationContext(), "No Account Attached With This Email", Toast.LENGTH_LONG).show();
@@ -392,9 +374,7 @@ public class LoginPage extends AppCompatActivity {
         if (email.isEmpty() || pass.isEmpty()){
             Toast.makeText(getApplicationContext(), "Enter Credentials", Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.INVISIBLE);
-            btcreate.setEnabled(true);
-            btlogin.setEnabled(true);
-            btgsignin.setEnabled(true);
+            buttonEnable();
         }
         else {
             mAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener(this, task -> {
@@ -406,12 +386,22 @@ public class LoginPage extends AppCompatActivity {
                 }
                 else {
                     progressBar.setVisibility(View.INVISIBLE);
-                    btcreate.setEnabled(true);
-                    btlogin.setEnabled(true);
-                    btgsignin.setEnabled(true);
+                    buttonEnable();
                     Toast.makeText(getApplicationContext(), "Something Went Wrong..", Toast.LENGTH_LONG).show();
                 }
             });
         }
+    }
+    public void buttonEnable(){
+        btcreate.setEnabled(true);
+        btlogin.setEnabled(true);
+        btgsignin.setEnabled(true);
+        btforgot.setEnabled(true);
+    }
+    public void buttonDisable(){
+        btlogin.setEnabled(false);
+        btgsignin.setEnabled(false);
+        btcreate.setEnabled(false);
+        btforgot.setEnabled(false);
     }
 }

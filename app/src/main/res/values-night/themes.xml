@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/colorPrimaryVariant</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnSecondary</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
         <item name="colorError">#CF6679</item>
         <item name="clockHandColor">@color/colorNightPopup</item>

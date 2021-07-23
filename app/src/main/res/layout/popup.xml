@@ -1,145 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+
     android:layout_height="wrap_content"
 
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    app:cardCornerRadius="12dp"
+    android:checkable="true"
 
     android:focusable="true"
-    android:checkable="true">
+    app:cardCornerRadius="12dp">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="6dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="8dp">
+
+
+            <ImageView
+                android:id="@+id/bookimg"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:maxHeight="130dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/icon" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:indeterminateAnimationType="disjoint"
+                app:indicatorColor="#6081D4FA"
+                app:trackColor="#00FFD600"
+                app:trackCornerRadius="2dp"
+                app:trackThickness="140dp" />
+
+            <TextView
+                android:id="@+id/imgtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textColor="#FFFFFF" />
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    app:cardElevation="8dp"
-                    android:layout_margin="6dp"
-                    app:cardCornerRadius="12dp"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content">
 
-
-                <ImageView
-                    android:id="@+id/bookimg"
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:maxHeight="130dp"
-                    android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/icon" />
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/progressBar"
-                    app:indeterminateAnimationType="disjoint"
-                    app:indicatorColor="#6081D4FA"
-                    app:trackColor="#00FFD600"
-                    app:trackCornerRadius="2dp"
-                    app:trackThickness="140dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-                <TextView
-                    android:id="@+id/imgtext"
-                    android:layout_width="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:textColor="#FFFFFF"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:layout_height="wrap_content"/>
-                </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textinputtitle"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textinputtitle"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:forceDarkAllowed="false"
+                android:hint="Title"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="150"
+
+                app:endIconMode="clear_text"
+
+                app:startIconDrawable="@drawable/ic_title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tvtitle"
                     android:layout_width="match_parent"
+
                     android:layout_height="wrap_content"
-                    app:endIconMode="clear_text"
-                    app:startIconDrawable="@drawable/ic_title"
-                    app:counterEnabled="true"
+                    android:maxLength="151" />
 
-                    android:forceDarkAllowed="false"
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    app:counterMaxLength="150"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textinputauthor"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
 
-                    android:hint="Title">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tvtitle"
-                        android:layout_width="match_parent"
-
-                        android:layout_height="wrap_content"
-                        android:maxLength="151"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textinputauthor"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:counterEnabled="true"
-                    app:endIconMode="clear_text"
-
-
-                    android:forceDarkAllowed="false"
-                    app:startIconDrawable="@drawable/ic_author"
-                    app:counterMaxLength="150"
-
-                    android:hint="Author Name">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tvauthor"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLength="151"/>
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="4dp">
-                <com.google.android.material.button.MaterialButton
+                android:layout_height="wrap_content"
+                android:forceDarkAllowed="false"
+                android:hint="Author Name"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp"
 
-                    android:layout_width="wrap_content"
+                app:counterEnabled="true"
+                app:counterMaxLength="150"
+                app:endIconMode="clear_text"
+
+                app:startIconDrawable="@drawable/ic_author">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tvauthor"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:visibility="gone"
-                    app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
-                    app:icon="@drawable/ic_camera"
-                    style="@style/Widget.App.Button.OutlinedButton.IconOnly"
-                    />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btimage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="add image"
-
-                    app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
-                    app:icon="@drawable/ic_add_img"
-                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btupload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-
-                    app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
-                    app:icon="@drawable/ic_publish"
-                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                    android:text="Upload" />
-
-            </LinearLayout>
+                    android:maxLength="151" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+
+                style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:icon="@drawable/ic_camera"
+                app:shapeAppearance="?attr/shapeAppearanceSmallComponent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btimage"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hapticFeedbackEnabled="true"
+                android:text="add image"
+                app:icon="@drawable/ic_add_img"
+                app:shapeAppearance="?attr/shapeAppearanceSmallComponent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btupload"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:hapticFeedbackEnabled="true"
+                android:text="Upload"
+                app:icon="@drawable/ic_publish"
+                app:shapeAppearance="?attr/shapeAppearanceSmallComponent" />
+
+        </LinearLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

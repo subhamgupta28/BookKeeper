@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
@@ -52,7 +53,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+@Keep
 public class ExploreBooks extends AppCompatActivity {
     TextView extitle, exauthor, extext;
 
@@ -99,6 +100,9 @@ public class ExploreBooks extends AppCompatActivity {
         exviewPager2.setClipToPadding(false);
         exviewPager2.setClipChildren(false);
         exviewPager2.setOffscreenPageLimit(3);
+        File fl = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/Shared Books/");
+        if(!fl.exists())
+            fl.mkdir();
         CompositePageTransformer transformer = new CompositePageTransformer();
         transformer.addTransformer((page, position) -> {
             float a = 1 - Math.abs(position);

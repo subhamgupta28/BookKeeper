@@ -104,7 +104,8 @@ public class SharedReader extends AppCompatActivity {
             List<String> path = uri.getPathSegments();
             System.out.println(path);
             key = path.get(path.size()-1);
-            key = key.substring(0, 10);
+            key = key.substring(key.lastIndexOf("/")+1).substring(0, 10);
+            Log.e("path",key);
             progressBar.setVisibility(View.VISIBLE);
         }
         chap = new ArrayList<>();
@@ -183,6 +184,7 @@ public class SharedReader extends AppCompatActivity {
         try {
             jsonObject = new JSONObject(jsonStr);
             JsonParser parser = new JsonParser();
+            Log.e("error",key);
             JSONObject keydata = jsonObject.getJSONObject(key).getJSONObject("CONTENTS");
             //Log.e("keydata",keydata.toString());
             JsonElement element = parser.parse(keydata.getString("PAGES"));

@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,6 +60,7 @@ public class Settings extends AppCompatActivity {
     MaterialCardView materialCardView;
     SwitchMaterial theme, lock;
     Button backup, restore;
+    MaterialButton shareapp;
     SharedSession sharedSession;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -86,6 +88,7 @@ public class Settings extends AppCompatActivity {
         materialCardView = findViewById(R.id.setingcard);
         accinfo = findViewById(R.id.accountinfo);
         profileimg = findViewById(R.id.profileimg);
+        shareapp = findViewById(R.id.shareapp);
         storageRef = FirebaseStorage.getInstance().getReference();
         ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
         ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -129,7 +132,17 @@ public class Settings extends AppCompatActivity {
                 sharedSession.setDarkTheme(false);
             }
         });
-
+        shareapp.setOnClickListener(view -> {
+            try {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Book Keeper");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
+                startActivity(Intent.createChooser(shareIntent, "Share to..."));
+            } catch(Exception e) {
+                //e.toString();
+            }
+        });
 
 
         List<String> child = prepareBackup();
