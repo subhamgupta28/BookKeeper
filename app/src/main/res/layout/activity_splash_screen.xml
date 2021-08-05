@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/splashre"
     android:layout_height="match_parent"
-    tools:context=".SplashScreen">
+    tools:context=".activities.SplashScreen">
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
         android:layout_width="match_parent"
         android:layout_centerInParent="true"
         android:layout_height="match_parent"
-        android:layout_margin="60dp"
+       android:layout_margin="32dp"
         app:lottie_rawRes="@raw/booksstack"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"/>

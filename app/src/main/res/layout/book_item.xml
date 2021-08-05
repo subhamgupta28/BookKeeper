@@ -6,23 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="160dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="3dp"
+    android:layout_margin="2dp"
 
     app:cardCornerRadius="8dp"
-    app:cardElevation="20dp"
+    app:cardElevation="8dp"
 
     android:focusable="true"
     android:id="@+id/bookcard"
 
 
     android:clickable="true">
-    <ImageView
+
+        <ImageView
             android:id="@+id/bimage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:foreground="@drawable/img_fade"
             tools:srcCompat="@tools:sample/avatars" />
+
+
+
 
 
                 <LinearLayout
@@ -90,7 +94,7 @@
 <RelativeLayout
     android:layout_width="100dp"
     android:layout_gravity="top|end"
-    android:layout_height="wrap_content">
+    android:layout_height="22dp">
     <View
         android:id="@+id/exshare"
         android:layout_width="wrap_content"
@@ -98,7 +102,7 @@
         android:background="@drawable/share_btn_background"
 
         android:hapticFeedbackEnabled="true"
-        android:layout_height="28dp"/>
+        android:layout_height="match_parent"/>
     <TextView
 
         android:layout_width="wrap_content"
@@ -107,7 +111,7 @@
         android:drawableTint="@color/white"
         android:textColor="@color/white"
         android:text="SHARE "
-        android:textSize="18dp"
+        android:textSize="16dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="6dp"

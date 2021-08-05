@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/srrelative"
-    tools:context=".ExploreBooks">
+    tools:context=".activities.ExploreBooks">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/li3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
         android:focusable="true"
         android:checkable="true"
         android:clickable="true"
@@ -105,7 +106,16 @@
 
     android:layout_height="60dp"/>
 
-
+    <Button
+        android:id="@+id/tryagainsr"
+        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="Try again"
+        app:strokeColor="@color/colorRed"
+        android:textColor="@color/colorRed"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
 

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/BookKeeper/app/src/main/res/drawable/img_fade.xml" value="0.186328125" />
+        <entry key="..\:/BookKeeper/app/src/main/res/drawable/share_btn_background.xml" value="0.186328125" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_all_books.xml" value="0.17421875" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_main.xml" value="0.17421875" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_splash_screen.xml" value="0.2" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/book_item.xml" value="0.2" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/fragment_explore_frangments.xml" value="0.17152777777777778" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/fragment_my_books.xml" value="0.17152777777777778" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/my_book_item.xml" value="0.1722007722007722" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/popup.xml" value="0.2" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/read_book_item.xml" value="0.1722007722007722" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />
@@ -25,7 +42,7 @@
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="13">
+        <list size="14">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
           <item index="2" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
@@ -39,6 +56,7 @@
           <item index="10" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.NonNull" />
           <item index="11" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
           <item index="12" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
+          <item index="13" class="java.lang.String" itemvalue="lombok.NonNull" />
         </list>
       </value>
     </option>

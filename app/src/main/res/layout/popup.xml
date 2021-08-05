@@ -21,18 +21,28 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="6dp"
+
             app:cardCornerRadius="10dp"
-            app:cardElevation="8dp">
+            app:cardElevation="4dp">
 
-
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/imgload"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:scaleY="1.4"
+                android:scaleX="1.4"
+                app:lottie_rawRes="@raw/imgload"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
             <ImageView
                 android:id="@+id/bookimg"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
-                android:maxHeight="130dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/icon" />
 
+
+                 />
+<!--            app:srcCompat="@drawable/icon"-->
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progressBar"
                 android:layout_width="match_parent"
@@ -149,6 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:hapticFeedbackEnabled="true"
+                app:strokeColor="@color/colorPrimary"
                 android:text="Upload"
                 app:icon="@drawable/ic_publish"
                 app:shapeAppearance="?attr/shapeAppearanceSmallComponent" />

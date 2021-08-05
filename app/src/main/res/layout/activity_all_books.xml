@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/relativelayoutallbooks"
-    tools:context=".AllBooks">
+    tools:context=".activities.AllBooks">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -164,17 +164,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
         app:fabAlignmentMode="end"
+
         android:forceDarkAllowed="false"
         app:fabAnimationMode="slide"
         app:menu="@menu/menu"
         app:elevation="24dp"
-        app:fabCradleRoundedCornerRadius="12dp"
+
         app:navigationIcon="@drawable/ic_more"
         app:navigationContentDescription="More"
-
-        app:fabCradleMargin="4dp"/>
+        />
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"
         android:id="@+id/progressup"
@@ -194,7 +194,16 @@
         app:layout_anchor="@id/abbottombar"/>
 
 
-
+    <Button
+        android:id="@+id/tryagainab"
+        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:text="Try again"
+        app:strokeColor="@color/colorRed"
+        android:textColor="@color/colorRed"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

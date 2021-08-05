@@ -14,7 +14,13 @@
         android:title="Profile"
         android:icon="@drawable/ic_author"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/vv"
 
+        
+        app:actionViewClass="android.widget.TextClock"
+        app:showAsAction="always"
+        android:title="g" />
 
 
 

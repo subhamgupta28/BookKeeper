@@ -6,15 +6,19 @@
     android:layout_margin="6dp"
     android:id="@+id/readcard"
     android:clickable="true"
-    app:cardElevation="2dp"
+
     android:focusable="true"
     app:cardCornerRadius="8dp">
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_margin="4dp"
 
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
+
+
 
 
             <EditText
@@ -35,22 +39,28 @@
                 android:scrollbars="vertical"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"/>
 
+    <ScrollView
+        android:layout_below="@+id/chapter"
+        android:layout_width="match_parent"
+        android:layout_above="@id/lmc"
+        android:layout_height="wrap_content">
         <EditText
             android:id="@+id/descriptmulti"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:layout_below="@+id/chapter"
+
             android:background="@android:color/transparent"
             android:ems="10"
             android:autoLink="all"
-            android:layout_above="@id/lmc"
+
             android:linksClickable="true"
             android:layout_margin="6dp"
+
             android:hint="Type text here..."
             android:gravity="start|top"
             android:inputType="textMultiLine" />
-
+    </ScrollView>
 
 
     <LinearLayout

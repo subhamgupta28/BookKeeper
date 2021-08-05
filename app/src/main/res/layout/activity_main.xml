@@ -6,21 +6,12 @@
     android:layout_height="match_parent"
 
     android:id="@+id/drawerlayout"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:id="@+id/mca"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginStart="4dp"
-           android:layout_marginBottom="2dp"
-           app:cardCornerRadius="8dp"
-            app:cardElevation="12dp"
-            android:layout_height="wrap_content">
+
 
 
         <com.google.android.material.tabs.TabLayout
@@ -28,21 +19,22 @@
             app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
             android:hapticFeedbackEnabled="true"
             app:tabIndicatorHeight="3dp"
-            app:tabGravity="center"
+            app:tabGravity="start"
+            app:tabMode="scrollable"
 
             android:layout_width="match_parent"
             app:tabIndicatorAnimationMode="elastic"
             android:layout_height="wrap_content">
 
         </com.google.android.material.tabs.TabLayout>
-        </com.google.android.material.card.MaterialCardView>
+
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
 
             android:layout_width="match_parent"
-            android:layout_below="@id/mca"
-
+            android:layout_below="@id/tablayout"
+            android:layout_marginBottom="?attr/actionBarSize"
             android:layout_height="wrap_content"/>
 
     </RelativeLayout>
@@ -54,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
 
-        style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
 
         app:fabAlignmentMode="end"
         app:fabAnimationMode="slide"
@@ -63,9 +55,8 @@
         app:menu="@menu/bottomappbar"
         app:navigationIcon="@drawable/ic_logout"
         app:navigationContentDescription="Logout"
-        app:hideOnScroll="true"
-        app:fabCradleRoundedCornerRadius="12dp"
-        app:fabCradleMargin="4dp"/>
+
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingbtn"
