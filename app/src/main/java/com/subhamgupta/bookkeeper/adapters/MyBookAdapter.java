@@ -244,7 +244,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         }).addOnFailureListener(exception -> {
             // Uh-oh, an error occurred!
             Log.e("ERROR", exception.getMessage());
-            Toast.makeText(context,"Book Not Deleted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,"Book Not Deleted", Toast.LENGTH_LONG).show();
         });
         DatabaseReference ref = FirebaseDatabase
                 .getInstance()

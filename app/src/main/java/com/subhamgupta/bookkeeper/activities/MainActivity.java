@@ -62,10 +62,13 @@ import com.subhamgupta.bookkeeper.dataclasses.SharedSession;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -413,13 +416,11 @@ public class MainActivity extends AppCompatActivity {
                     //String name = filename.replaceAll("[^a-zA-Z0-9]", "");
                     //String id = String.valueOf((System.currentTimeMillis()/1000));
                     String id = String.valueOf((System.currentTimeMillis()));
-                    DateTimeFormatter dtf = null;
-                    LocalDateTime now = null;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                        now = LocalDateTime.now();
-                        Log.e( "onCreateView: ",dtf.format(now) );
-                    }
+
+                        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH).format(Calendar.getInstance().getTime());
+                        Log.e( "timedate: ", timeStamp);
+
+
                         bookref = "Book Management";
                         mReference.child(id).child("TITLE").setValue(title);
                         mReference.child(id).child("KEY").setValue(id);
@@ -427,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
                         mReference.child(id).child("AUTHOR").setValue(author);
                         mReference.child(id).child("BOOKREF").setValue(bookref);
                         mReference.child(id).child("IMAGENAME").setValue(imagename);
-                        mReference.child(id).child("UPLOAD_TIME").setValue(String.valueOf(dtf.format(now)));
+                        mReference.child(id).child("UPLOAD_TIME").setValue(timeStamp);
                         mReference.child(id).child("IMAGELINK").setValue(url.toString())
                                 .addOnSuccessListener(aVoid -> {
                                     Snackbar.make(contextView, "Book Created, Now you can write, by clicking on the book", Snackbar.LENGTH_LONG)
