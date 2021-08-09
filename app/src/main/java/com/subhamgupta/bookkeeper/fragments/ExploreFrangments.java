@@ -75,7 +75,6 @@ public class ExploreFrangments extends Fragment {
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, LinearLayout.VERTICAL));
         loadingview.setVisibility(View.VISIBLE);
         loadingview.setAnimation(R.raw.loadinganime);
-        loadingview.loop(true);
         loadingview.playAnimation();
         swipeRefreshLayout.setOnRefreshListener(() -> {
             try {

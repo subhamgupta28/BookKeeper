@@ -1,40 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="12dp"
     android:layout_margin="12dp"
+    android:id="@+id/infocard"
+    app:cardElevation="0.1dp"
     android:layout_height="wrap_content">
-<RelativeLayout
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_margin="8dp"
+    android:layout_margin="16dp"
+    android:orientation="vertical"
     android:layout_height="wrap_content">
 
+<com.google.android.material.card.MaterialCardView
+    android:layout_gravity="center"
+    android:layout_width="200dp"
 
-    <TextView
-        android:id="@+id/dtext"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+    app:cardElevation="6dp"
+    app:cardCornerRadius="10dp"
+
+    android:layout_height="200dp">
+    <ImageView
+        android:id="@+id/infoimg"
         android:layout_width="match_parent"
-        android:text="Text"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
+</com.google.android.material.card.MaterialCardView>
 
-    <Button
-        android:id="@+id/negbutton"
-        android:layout_below="@id/dtext"
-        android:layout_width="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="8dp"
-        android:text="Cancel"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/posbutton"
-        android:layout_below="@id/dtext"
-        android:layout_width="wrap_content"
-        android:layout_toStartOf="@id/negbutton"
-        android:text="EXit"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_margin="8dp"
-        android:layout_height="wrap_content"/>
-    </RelativeLayout>
+   <LinearLayout
+       android:layout_marginTop="16dp"
+       android:layout_width="match_parent"
+       android:orientation="horizontal"
+       android:layout_height="wrap_content">
+       <TextView
+           android:text="Title :"
+           android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"/>
+       <TextView
+           android:layout_marginStart="8dp"
+           android:id="@+id/infotitle"
+           android:text="title"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"/>
+   </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="Author :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginStart="8dp"
+            android:id="@+id/infoauthor"
+            android:text="author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="Share Link :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginStart="8dp"
+            android:id="@+id/infoshare"
+            android:clickable="true"
+            android:autoLink="all"
+            android:linksClickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="Date Created :"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_marginStart="8dp"
+            android:id="@+id/infodate"
+            android:text="date created"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="File Size:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/infofsize"
+            android:layout_width="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

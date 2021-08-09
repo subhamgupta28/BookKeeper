@@ -2,6 +2,8 @@ package com.subhamgupta.bookkeeper.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.card.MaterialCardView;
@@ -53,6 +61,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     FirebaseUser user;
     DatabaseReference ref, ref2;
     MaterialAlertDialogBuilder alert;
+    Context context;
 
 
 
@@ -75,20 +84,22 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .centerCrop()
                 .into(holder.imageView);
-
-        /*Drawable unwrappedDrawable = holder.menu.getBackground();
+        context = holder.materialCardView.getContext();
+       /* Drawable unwrappedDrawable = holder.imageView.getBackground();
         Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
         DrawableCompat.setTint(wrappedDrawable, Color.parseColor("#121212"));*/
 
         holder.author.setText(myBookModel.getAUTHOR());
         holder.title.setText(myBookModel.getTITLE());
-        holder.materialCardView.setOnClickListener(view -> nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(),myBookModel.getSYNC()));
+        holder.materialCardView.setOnClickListener(view -> nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(),myBookModel.getSYNC(), myBookModel.getUPLOAD_TIME()));
         holder.menu.setOnClickListener(view -> showMenu(holder, myBookModel));
 
     }public void unpublish(MyBookAdapter.MyBookHolder holder, String key){
         ref.child("PUBLISHED_BOOKS").child(key).removeValue()
                 .addOnFailureListener(e -> Toast.makeText(holder.imageView.getContext(), "Something went wrong", Toast.LENGTH_LONG).show())
-                .addOnSuccessListener(unused -> ref2.child(key).child("PUBLISHED").setValue(false).addOnSuccessListener(unused1 -> Toast.makeText(holder.imageView.getContext(), "Book is removed from explore section it is un published now", Toast.LENGTH_LONG).show()).addOnFailureListener(e -> Toast.makeText(holder.imageView.getContext(), "Something went wrong", Toast.LENGTH_LONG).show()));
+                .addOnSuccessListener(unused -> ref2.child(key).child("PUBLISHED").setValue(false)
+                        .addOnSuccessListener(unused1 -> Toast.makeText(holder.imageView.getContext(), "Book is removed from explore section it is un published now", Toast.LENGTH_LONG).show())
+                        .addOnFailureListener(e -> Toast.makeText(holder.imageView.getContext(), "Something went wrong", Toast.LENGTH_LONG).show()));
     }
     public void showMenu(MyBookAdapter.MyBookHolder holder, MyBookModel myBookModel){
         ListPopupWindow listPopupWindow = new ListPopupWindow(holder.materialCardView.getContext(), null, R.attr.listPopupWindowStyle);
@@ -113,7 +124,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                     share(holder.menu.getContext(), myBookModel.getFILELINK());
                     break;
                 case 1:
-                    nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(), myBookModel.getSYNC());
+                    nextPage(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getAUTHOR(), myBookModel.getIMAGELINK(), myBookModel.getFILELINK(), myBookModel.getKEY(), myBookModel.getSYNC(), myBookModel.getUPLOAD_TIME());
                     break;
                 case 2:
 
@@ -156,7 +167,6 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                 if (myBookModel.getFILELINK()!=null){
                     publishBook(holder.imageView.getContext(), myBookModel.getTITLE(), myBookModel.getIMAGELINK(), myBookModel.getAUTHOR(), myBookModel.getDESCRIPTION(), myBookModel.getKEY(), myBookModel.getFILELINK());
                 }
-
             });
         }
 
@@ -226,14 +236,15 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     }
     public void deleteBook(String link, String title, String key){
         Log.e("link",link+" kk");
-        firebaseStorage = FirebaseStorage.getInstance();
-        photoRef = firebaseStorage.getReferenceFromUrl(link);
+        //firebaseStorage = FirebaseStorage.getInstance();
+        photoRef = storageRef.child(FirebaseAuth.getInstance().getUid()+"/"+key+".json");
         photoRef.delete().addOnSuccessListener(aVoid -> {
 
-            Log.d("DEL", "onSuccess: deleted file");
+            Log.d("DEL", "onSuccess: deleted file from firebase");
         }).addOnFailureListener(exception -> {
             // Uh-oh, an error occurred!
-            //Toast.makeText(MyAdapter.this,"Book Not Deleted", Toast.LENGTH_LONG).show();
+            Log.e("ERROR", exception.getMessage());
+            Toast.makeText(context,"Book Not Deleted", Toast.LENGTH_LONG).show();
         });
         DatabaseReference ref = FirebaseDatabase
                 .getInstance()
@@ -279,7 +290,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         });
     }
     public void deleteFromStorage(String key){
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/BookKeeper/"+key+".json");
+        File file = new File(context.getFilesDir(),"/BookKeeper/"+key+".json");
         if (file.exists()) {
             Log.e("File "+key+" deleted", String.valueOf(file.delete()));
         }
@@ -316,7 +327,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
         }
     }
-    public void nextPage(Context context, String title, String author, String url, String fileurl, String key, String sync){
+    public void nextPage(Context context, String title, String author, String url, String fileurl, String key, String sync, String date){
         Intent intent = new Intent(context, AllBooks.class);
         intent.putExtra("title",title);
         intent.putExtra("author",author);
@@ -324,6 +335,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         intent.putExtra("url",url);
         intent.putExtra("key",key);
         intent.putExtra("sync",sync);
+        intent.putExtra("date",date);
 
         context.startActivity(intent);
     }
@@ -338,7 +350,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     public void upload(MyBookAdapter.MyBookHolder holder, String key){
         holder.backupprogress.setIndeterminate(true);
         holder.backupprogress.setVisibility(View.VISIBLE);
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+        File file = new File(holder.materialCardView.getContext().getFilesDir(),
                 File.separator + "BookKeeper/"+key+".json");
 
 
@@ -348,15 +360,12 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
                 InputStream stream;
                 try {
                     //stream = new FileInputStream(new File("/sdcard/BookKeeper/"+key+".json"));
-                    stream = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                    stream = new FileInputStream(new File(holder.materialCardView.getContext().getFilesDir(),
                             File.separator + "/BookKeeper/"+key+".json"));
                     UploadTask uploadTask = storageRef.child(user.getUid()+"/"+key+".json").putStream(stream);
                     uploadTask.addOnFailureListener(exception -> {
-                        // Handle unsuccessful uploads
                         Log.d("error",exception.getMessage());
                     }).addOnSuccessListener(taskSnapshot -> {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        // ...
                         storageRef.child(user.getUid()+"/"+key+".json").getDownloadUrl().addOnSuccessListener(uri -> {
                             ref2.child(key).child("SYNC").setValue("Not");
                             ref2.child(key).child("FILELINK").setValue(uri.toString()).addOnFailureListener(e -> {
@@ -385,6 +394,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
                 } catch (FileNotFoundException e) {
                     Log.e("Error",e.getMessage());
+                    Toast.makeText(holder.materialCardView.getContext(), "No Book file is available or Book is empty", Toast.LENGTH_LONG).show();
                 }
 
 
@@ -392,6 +402,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         else {
 
             Log.e("file","not present");
+            Toast.makeText(holder.materialCardView.getContext(), "No Book file is available or Book is empty", Toast.LENGTH_LONG).show();
             holder.backupprogress.setVisibility(View.GONE);
         }
 

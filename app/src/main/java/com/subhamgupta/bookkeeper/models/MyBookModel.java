@@ -10,6 +10,7 @@ public class MyBookModel implements Serializable {
     String IMAGELINK;
     String BOOKREF;
     String IMAGENAME;
+    String UPLOAD_TIME;
     String DESCRIPTION;
     String KEY;
     String EMAIL;
@@ -23,19 +24,28 @@ public class MyBookModel implements Serializable {
     MyBookModel() {
     }
 
-    MyBookModel(String TITLE, String AUTHOR, String IMAGELINK,
-                       String BOOKREF, String IMAGENAME, String DESCRIPTION,
-                       String KEY, String EMAIL, String SYNC, String FILELINK,
-                       long RATINGS, int RATING_COUNT, boolean PUBLISHED)
-    {
+    public MyBookModel(String TITLE,
+                       String AUTHOR,
+                       String IMAGELINK,
+                       String BOOKREF,
+                       String IMAGENAME,
+                       String UPLOAD_TIME,
+                       String DESCRIPTION,
+                       String KEY,
+                       String SYNC,
+                       String FILELINK,
+                       long RATINGS,
+                       int RATING_COUNT,
+                       boolean PUBLISHED
+    ) {
         this.TITLE = TITLE;
         this.AUTHOR = AUTHOR;
         this.IMAGELINK = IMAGELINK;
         this.BOOKREF = BOOKREF;
         this.IMAGENAME = IMAGENAME;
+        this.UPLOAD_TIME = UPLOAD_TIME;
         this.DESCRIPTION = DESCRIPTION;
         this.KEY = KEY;
-        this.EMAIL = EMAIL;
         this.SYNC = SYNC;
         this.FILELINK = FILELINK;
         this.RATINGS = RATINGS;
@@ -43,6 +53,13 @@ public class MyBookModel implements Serializable {
         this.PUBLISHED = PUBLISHED;
     }
 
+    public String getUPLOAD_TIME() {
+        return UPLOAD_TIME;
+    }
+
+    public void setUPLOAD_TIME(String UPLOAD_TIME) {
+        this.UPLOAD_TIME = UPLOAD_TIME;
+    }
     public String getEMAIL() {
         return EMAIL;
     }

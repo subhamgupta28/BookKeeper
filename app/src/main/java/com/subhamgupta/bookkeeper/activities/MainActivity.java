@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -61,6 +62,8 @@ import com.subhamgupta.bookkeeper.dataclasses.SharedSession;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -408,8 +411,15 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(uri -> {
                     Uri url = Uri.parse(uri.toString());
                     //String name = filename.replaceAll("[^a-zA-Z0-9]", "");
-                    String id = String.valueOf((System.currentTimeMillis()/1000));
-
+                    //String id = String.valueOf((System.currentTimeMillis()/1000));
+                    String id = String.valueOf((System.currentTimeMillis()));
+                    DateTimeFormatter dtf = null;
+                    LocalDateTime now = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                        now = LocalDateTime.now();
+                        Log.e( "onCreateView: ",dtf.format(now) );
+                    }
                         bookref = "Book Management";
                         mReference.child(id).child("TITLE").setValue(title);
                         mReference.child(id).child("KEY").setValue(id);
@@ -417,6 +427,7 @@ public class MainActivity extends AppCompatActivity {
                         mReference.child(id).child("AUTHOR").setValue(author);
                         mReference.child(id).child("BOOKREF").setValue(bookref);
                         mReference.child(id).child("IMAGENAME").setValue(imagename);
+                        mReference.child(id).child("UPLOAD_TIME").setValue(String.valueOf(dtf.format(now)));
                         mReference.child(id).child("IMAGELINK").setValue(url.toString())
                                 .addOnSuccessListener(aVoid -> {
                                     Snackbar.make(contextView, "Book Created, Now you can write, by clicking on the book", Snackbar.LENGTH_LONG)

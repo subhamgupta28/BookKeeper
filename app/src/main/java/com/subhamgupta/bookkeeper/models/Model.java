@@ -10,6 +10,7 @@ public class Model implements Serializable {
     String AUTHOR;
     String IMAGELINK;
     String BOOKREF;
+    String UPLOAD_TIME;
     String IMAGENAME;
     String DESCRIPTION;
     String KEY;
@@ -20,23 +21,45 @@ public class Model implements Serializable {
     private Date time;
 
 
-    Model(String TITLE, String AUTHOR, String IMAGELINK,
-                 String BOOKREF, String IMAGENAME, String DESCRIPTION,
-                 String KEY, long RATINGS, int RATING_COUNT)
-    {
+    public Model(String TITLE,
+                 String AUTHOR,
+                 String IMAGELINK,
+                 String BOOKREF,
+                 String UPLOAD_TIME,
+                 String IMAGENAME,
+                 String DESCRIPTION,
+                 String KEY,
+                 String FILELINK,
+                 long RATINGS,
+                 int RATING_COUNT,
+                 boolean PUBLISHED
+
+    ) {
         this.TITLE = TITLE;
         this.AUTHOR = AUTHOR;
         this.IMAGELINK = IMAGELINK;
         this.BOOKREF = BOOKREF;
+        this.UPLOAD_TIME = UPLOAD_TIME;
         this.IMAGENAME = IMAGENAME;
         this.DESCRIPTION = DESCRIPTION;
         this.KEY = KEY;
+        this.FILELINK = FILELINK;
         this.RATINGS = RATINGS;
         this.RATING_COUNT = RATING_COUNT;
+        this.PUBLISHED = PUBLISHED;
+
     }
 
     Model(){
 
+    }
+
+    public String getUPLOAD_TIME() {
+        return UPLOAD_TIME;
+    }
+
+    public void setUPLOAD_TIME(String UPLOAD_TIME) {
+        this.UPLOAD_TIME = UPLOAD_TIME;
     }
 
     public boolean isPUBLISHED() {

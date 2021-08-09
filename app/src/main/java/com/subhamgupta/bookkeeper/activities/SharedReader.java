@@ -101,7 +101,10 @@ public class SharedReader extends AppCompatActivity {
             List<String> path = uri.getPathSegments();
             System.out.println(path);
             key = path.get(path.size()-1);
-            key = key.substring(key.lastIndexOf("/")+1).substring(0, 10);
+            //System.out.println(path);
+            //key = key.substring(key.lastIndexOf("/")+1).substring(0, 13);
+            key = key.substring(key.lastIndexOf("/")+1);
+            key = key.substring(0, key.length()-5);
             Log.e("path",key);
 
         }
@@ -178,10 +181,13 @@ public class SharedReader extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     tryagain.setVisibility(View.VISIBLE);
 
-                    Snackbar.make(findViewById(android.R.id.content),"Something went wrong try again.",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(android.R.id.content),"No internet connection or Author may have deleted the book.",Snackbar.LENGTH_LONG)
+                            .setTextColor(Color.parseColor("#DB4437"))
+                            .setDuration(10000)
+                            .show();
 
                 });
-                Log.e("error", er.getMessage());
+                Log.e("error", String.valueOf(er.getCause()));
             }
 
         });

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
@@ -58,6 +61,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.JsonElement;
@@ -110,7 +114,7 @@ public class AllBooks extends AppCompatActivity  {
     private MaterialCardView materialCardView;
     private String title, author, url, fileurl, key = "0";
     private Map<String, String> contents;
-    private String font, color;
+    private String font, color, date;
     private long  fontsize, currentpage;
     private CoordinatorLayout relativeLayout;
     private SharedSession ss;
@@ -128,10 +132,10 @@ public class AllBooks extends AppCompatActivity  {
     private BottomSheetBehavior sheetBehavior;
     int READ_REQUEST_CODE = 202;
     private EditText gotopage;
-    private Button btngo, syncnow, synccancel, tryagain;
+    private Button btngo, tryagain, infocard;
     private long pgn;
     private String sync;
-    MaterialCardView synclayout;
+
     FirebaseUser user;
 
 
@@ -154,8 +158,12 @@ public class AllBooks extends AppCompatActivity  {
         materialCardView = findViewById(R.id.li2);
         relativeLayout = findViewById(R.id.relativelayoutallbooks);
         tryagain = findViewById(R.id.tryagainab);
+        infocard = findViewById(R.id.info);
         //backup = findViewById(R.id.backup);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        storageRef = FirebaseStorage.getInstance().getReference();
+        ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
+        ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
         MaterialShapeDrawable bottomBarBackground = (MaterialShapeDrawable) bottomAppBar.getBackground();
         bottomBarBackground.setShapeAppearanceModel(
                 bottomBarBackground.getShapeAppearanceModel()
@@ -175,13 +183,12 @@ public class AllBooks extends AppCompatActivity  {
 
         gotopage =findViewById(R.id.gotopage);
         btngo =findViewById(R.id.btngo);
-        synclayout =findViewById(R.id.synclayout);
-        syncnow =findViewById(R.id.syncnow);
-        synccancel =findViewById(R.id.synccancel);
+
         progressBar.setVisibility(View.VISIBLE);
         requestForPermission();
+        infocard.setOnClickListener(view -> showInfo());
         tryagain.setOnClickListener(view -> downloadFile(key+".json", fileurl));
-        new Handler().postDelayed(this::_init,300);
+        new Handler().postDelayed(this::_init,100);
 
         
     }
@@ -328,7 +335,7 @@ public class AllBooks extends AppCompatActivity  {
         else{
             setEmptyCard();
         }
-        syncnow.setOnClickListener(view -> sync());
+
 
         btngo.setOnClickListener(view -> {
             int pg = Integer.parseInt(gotopage.getText().toString());
@@ -336,6 +343,7 @@ public class AllBooks extends AppCompatActivity  {
                 viewPager2.setCurrentItem(pg-1, true);
             Log.e("pg", String.valueOf(pg));
         });
+
 
          if (ss.isDemoAddBook())
             showDemo();
@@ -428,9 +436,7 @@ public class AllBooks extends AppCompatActivity  {
 
         if (file.isFile())
         {
-            storageRef = FirebaseStorage.getInstance().getReference();
-            ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA");
-            ref2 = ref.child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
 
             InputStream stream;
             try {
@@ -543,7 +549,53 @@ public class AllBooks extends AppCompatActivity  {
 
 
     }
+    MaterialAlertDialogBuilder materialAlertDialogBuilder;
+    TextView infoTitle, infoAuthor, infoDate, infoShare, infoFSize;
+    ImageView infoImg;
+    public void showInfo(){
+        materialAlertDialogBuilder = new MaterialAlertDialogBuilder(this);
+        final View contactPopupView = getLayoutInflater().inflate(R.layout.dialog_item, null);
+        infoTitle = contactPopupView.findViewById(R.id.infotitle);
+        infoAuthor = contactPopupView.findViewById(R.id.infoauthor);
+        infoDate = contactPopupView.findViewById(R.id.infodate);
+        infoShare = contactPopupView.findViewById(R.id.infoshare);
+        infoFSize = contactPopupView.findViewById(R.id.infofsize);
+        infoImg = contactPopupView.findViewById(R.id.infoimg);
 
+        StorageReference reference = storageRef.child(user.getUid()+"/"+key+".json");
+
+        reference.getMetadata().addOnSuccessListener(storageMetadata -> {
+            long size = storageMetadata.getSizeBytes()/1024;
+            Log.e( "showInfo: Updated Time", String.valueOf(storageMetadata.getUpdatedTimeMillis()));
+            Log.e( "showInfo: Upload Time",String.valueOf(storageMetadata.getCreationTimeMillis()));
+
+            Log.e("The size of the file is:",(size)+" KB");
+            infoFSize.setText(size+" KB");
+        }).addOnFailureListener(exception -> {
+            infoFSize.setText("NA");
+            Log.e("ERROR", exception.getMessage());
+        } );
+
+        Glide.with(getApplicationContext())
+                .asBitmap()
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .thumbnail(0.005f)
+                .centerCrop()
+                .into(infoImg);
+        infoTitle.setText(title);
+        infoAuthor.setText(author);
+        if (fileurl==null || fileurl.isEmpty())
+            infoShare.setText("NA");
+        else
+            infoShare.setText(fileurl);
+        if (date==null || date.isEmpty())
+            infoDate.setText("NA");
+        else
+            infoDate.setText(date);
+        materialAlertDialogBuilder.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        materialAlertDialogBuilder.setView(contactPopupView).show();
+    }
 
     public void setEmptyCard(){
         chap.add(new ReadBookModel("Add Text","", 1));
@@ -569,23 +621,6 @@ public class AllBooks extends AppCompatActivity  {
     }
 
 
-    public void sync(){
-        if (fileurl!=null){
-            progressBar.setVisibility(View.VISIBLE);
-            File file = new File(this.getFilesDir(),"/BookKeeper/");
-            if (file.isDirectory()) {
-                new File(file, key+".json").delete();
-            }
-            downloadFile( key+".json", fileurl);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("BOOKDATA").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-            ref.child(key).child("SYNC").setValue("synced").addOnSuccessListener(unused -> synclayout.setVisibility(View.GONE)).addOnFailureListener(e -> {
-
-            });
-        }
-        else
-            Toast.makeText(getApplicationContext(), "Something Went Wrong", Toast.LENGTH_LONG).show();
-
-    }
     List<String> chapt, descri;
     public void setBackup(){
         isBookEmpty = false;
@@ -639,7 +674,7 @@ public class AllBooks extends AppCompatActivity  {
         fileurl = getIntent().getStringExtra("fileurl");
         sync = getIntent().getStringExtra("sync");
         ss = new SharedSession(getApplicationContext());
-
+        date = getIntent().getStringExtra("date");
         String uuid = new SharedSession(getApplicationContext()).getUuid();
         Log.e("uuid",uuid);
 //        if (sync!=null){
@@ -673,25 +708,21 @@ public class AllBooks extends AppCompatActivity  {
                             Palette p = Palette.from(resource).generate();
                             // Use generated instance
                              bgcolor = p.getDominantColor(Color.parseColor("#121212"));
-
+                                int c = p.getMutedColor(Color.parseColor("#121212"));
                                 relativeLayout.setBackgroundColor(bgcolor);
                                 getWindow().setStatusBarColor(bgcolor);
 
 
 
-                            //materialCardView.setCardBackgroundColor(bgcolor);
-                            //navigationView.setBackgroundColor(bgcolor);
+//                            materialCardView.setCardBackgroundColor(c);
+//                            bottomAppBar.setBackgroundColor(c);
 
                         }
                         return false;
                     }
                 })
                 .into(boimg);
-        synccancel.setOnClickListener(view -> {
-            TransitionManager.beginDelayedTransition(synclayout, new Slide(Gravity.RIGHT));
-            TransitionManager.beginDelayedTransition(viewPager2, new ChangeBounds());
-            synclayout.setVisibility(View.GONE);
-        });
+
     }
 
     List<String> chapterss, desc;
