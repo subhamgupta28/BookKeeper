@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.subhamgupta.bookkeeper.R;
 import com.subhamgupta.bookkeeper.dataclasses.SharedSession;
 
@@ -57,7 +58,7 @@ public class SplashScreen extends AppCompatActivity {
         if (!sharedSession.getData().isEmpty()){
             if (sharedSession.isDarkTheme()){
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                relativeLayout.setBackgroundColor(Color.BLACK);
+
             }
             else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -74,12 +75,12 @@ public class SplashScreen extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             if (currentUser!=null && currentUser.isEmailVerified()){
-                HomeActivitty();
+                HomeActivity();
             }else {
-                LoginAvtivity();
+                LoginActivity();
             }
 
-        }, 3000);
+        }, 2500);
 
     }
     public void createPublicFolders(){
@@ -95,12 +96,12 @@ public class SplashScreen extends AppCompatActivity {
     }
 
 
-    public void LoginAvtivity(){
+    public void LoginActivity(){
         Intent intent = new Intent(getApplicationContext(), LoginPage.class);
         startActivity(intent);
         finish();
     }
-    public void HomeActivitty(){
+    public void HomeActivity(){
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();

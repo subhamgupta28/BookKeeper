@@ -18,6 +18,7 @@
         <item name="colorOnBackground">#BF535353</item>
         <item name="clockHandColor">@color/colorNightPopup</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="android:windowActivityTransitions">true</item>
 
     </style>
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

@@ -12,9 +12,9 @@
         android:id="@+id/setingcard"
         android:layout_width="match_parent"
         android:layout_gravity="center"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp"
         android:layout_height="wrap_content">
@@ -79,7 +79,7 @@
 <com.google.android.material.card.MaterialCardView
     android:layout_width="match_parent"
     app:cardCornerRadius="12dp"
-    android:layout_margin="16dp"
+    android:layout_margin="10dp"
     app:cardElevation="8dp"
     android:layout_height="wrap_content">
 
@@ -117,10 +117,10 @@
 </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="10dp"
         app:cardElevation="8dp"
         app:cardCornerRadius="12dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -147,7 +147,6 @@
                 android:layout_marginStart="16dp"
                 app:trackCornerRadius="2dp"
                 android:layout_marginEnd="16dp"
-                android:visibility="gone"
                 app:trackColor="#00FFFFFF"
                 android:layout_height="wrap_content"/>
             <LinearLayout
@@ -159,13 +158,14 @@
                 <Button
                     android:id="@+id/allrestore"
                     android:text="Restore"
-
+                    android:textColor="@color/white"
                     android:layout_marginEnd="12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <Button
                     android:id="@+id/allbackup"
                     android:text="backup"
+                    android:textColor="@color/white"
                     android:layout_marginEnd="12dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -191,7 +191,7 @@
     android:layout_height="wrap_content"/>
 <com.google.android.material.button.MaterialButton
     android:id="@+id/shareapp"
-    android:layout_gravity="end"
+    android:layout_gravity="center"
     android:layout_margin="16dp"
     android:textColor="@color/white"
     android:text="share app"

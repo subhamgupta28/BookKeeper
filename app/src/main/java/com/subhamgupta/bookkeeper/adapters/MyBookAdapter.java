@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -336,7 +337,6 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         intent.putExtra("key",key);
         intent.putExtra("sync",sync);
         intent.putExtra("date",date);
-
         context.startActivity(intent);
     }
     private void share(Context context, String link) {

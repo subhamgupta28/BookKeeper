@@ -19,6 +19,7 @@
 
         <item name="clockHandColor">@color/colorDayPopup</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="android:windowActivityTransitions">true</item>
 
     </style>
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">

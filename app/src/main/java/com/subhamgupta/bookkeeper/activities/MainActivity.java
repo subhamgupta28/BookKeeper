@@ -16,11 +16,13 @@ import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextClock;
@@ -536,8 +538,11 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.bottomappbar, menu);
 
         MenuItem menuItem = menu.findItem(R.id.myinfo);
+
         menuItem.setOnMenuItemClickListener(menuItem1 -> {
             myInfo();
+
+
             return false;
         });
         MenuItem item = menu.findItem(R.id.appsearch);

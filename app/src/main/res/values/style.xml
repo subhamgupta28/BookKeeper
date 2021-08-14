@@ -10,6 +10,7 @@
         <item name="android:minHeight">48dp</item>
 
     </style>
+
     <style name="RatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">#FFFFFF</item>
         <item name="colorControlActivated">#FFEE58</item>

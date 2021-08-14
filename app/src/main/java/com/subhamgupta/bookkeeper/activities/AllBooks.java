@@ -82,11 +82,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -565,12 +567,13 @@ public class AllBooks extends AppCompatActivity  {
         StorageReference reference = storageRef.child(user.getUid()+"/"+key+".json");
 
         reference.getMetadata().addOnSuccessListener(storageMetadata -> {
-            long size = storageMetadata.getSizeBytes()/1024;
-            Log.e( "showInfo: Updated Time", String.valueOf(storageMetadata.getUpdatedTimeMillis()));
-            Log.e( "showInfo: Upload Time",String.valueOf(storageMetadata.getCreationTimeMillis()));
-
-            Log.e("The size of the file is:",(size)+" KB");
-            infoFSize.setText(size+" KB");
+            double size = storageMetadata.getSizeBytes();
+            size = size/1024;
+            DecimalFormat df = new DecimalFormat("#.###");
+            df.setRoundingMode(RoundingMode.CEILING);
+            Log.e("The size of the file is:",df.format(size)+" KB");
+            System.out.println(df.format(size));
+            infoFSize.setText(df.format(size)+" KB");
         }).addOnFailureListener(exception -> {
             infoFSize.setText("NA");
             Log.e("ERROR", exception.getMessage());

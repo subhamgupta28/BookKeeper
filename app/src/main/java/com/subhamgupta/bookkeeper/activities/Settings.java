@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,8 +34,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.subhamgupta.bookkeeper.BuildConfig;
-import com.subhamgupta.bookkeeper.dataclasses.JsonHelper;
 import com.subhamgupta.bookkeeper.R;
+import com.subhamgupta.bookkeeper.dataclasses.JsonHelper;
 import com.subhamgupta.bookkeeper.dataclasses.SharedSession;
 
 import java.io.File;
@@ -49,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Settings extends AppCompatActivity {
+public class Settings extends AppCompatActivity  {
 
     TextView email, name, accinfo, backuptext, restoretext;
     ImageView profileimg;
@@ -132,7 +134,7 @@ public class Settings extends AppCompatActivity {
             }
         });
         shareapp.setOnClickListener(view -> {
-            try {
+            try{
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Book Keeper");
@@ -196,7 +198,7 @@ public class Settings extends AppCompatActivity {
 
     public List<String> prepareBackup(){
         List<String> children = new ArrayList<>();
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+        File file = new File(this.getFilesDir(),
                 File.separator + "BookKeeper/");
         if (file.isDirectory()) {
             children = Arrays.asList(file.list());
@@ -209,28 +211,6 @@ public class Settings extends AppCompatActivity {
         }
         return children;
     }
-    public void saveForOfflineReading(String json){
-        try {
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    File.separator + "BookKeeper/");
-            if(!dir.exists())
-                dir.mkdir();
-            else{
-                File myFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                        File.separator + "SavedFile"+".txt");
-
-                FileOutputStream fOut = new FileOutputStream(myFile);
-                OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-                myOutWriter.write(json);
-                myOutWriter.close();
-                fOut.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("err",e.getMessage());
-        }
-
-    }
     public void upload(List<String> filesList){
         backup.setEnabled(false);
        for (int i=0;i<filesList.size();i++)
@@ -240,8 +220,8 @@ public class Settings extends AppCompatActivity {
             InputStream stream;
             try {
                 //stream = new FileInputStream(new File("/sdcard/BookKeeper/"+key+".json"));
-                stream = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                        File.separator + "/BookKeeper/"+filename+".json"));
+                stream = new FileInputStream(this.getFilesDir()+
+                        File.separator + "/BookKeeper/"+filename+".json");
                 UploadTask uploadTask = storageRef.child(filename).putStream(stream);
                 uploadTask.addOnFailureListener(exception -> {
                   backuptext.setText("Something Went Wrong");

@@ -43,22 +43,17 @@
         android:layout_below="@+id/chapter"
         android:layout_width="match_parent"
         android:layout_above="@id/lmc"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <EditText
             android:id="@+id/descriptmulti"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
             android:background="@android:color/transparent"
             android:ems="10"
             android:autoLink="all"
-
             android:linksClickable="true"
             android:layout_margin="6dp"
-
             android:hint="Type text here..."
-            android:gravity="start|top"
             android:inputType="textMultiLine" />
     </ScrollView>
 
