@@ -121,6 +121,7 @@ public class AllBooks extends AppCompatActivity  {
     private CoordinatorLayout relativeLayout;
     private SharedSession ss;
     private int bgcolor = 0;
+    private boolean isloaded = false;
     private Map<Long, Map<String, String>> map;
     private Slider slider;
     private long downloadID;
@@ -340,10 +341,15 @@ public class AllBooks extends AppCompatActivity  {
 
 
         btngo.setOnClickListener(view -> {
-            int pg = Integer.parseInt(gotopage.getText().toString());
-            if(pg<=chap.size())
-                viewPager2.setCurrentItem(pg-1, true);
-            Log.e("pg", String.valueOf(pg));
+            try {
+                int pg = Integer.parseInt(gotopage.getText().toString());
+                if(pg<=chap.size())
+                    viewPager2.setCurrentItem(pg-1, true);
+                Log.e("pg", String.valueOf(pg));
+            }catch (Exception e){
+                Log.e( "_init: ",e.getMessage() );
+            }
+
         });
 
 
@@ -584,7 +590,6 @@ public class AllBooks extends AppCompatActivity  {
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .thumbnail(0.005f)
-                .centerCrop()
                 .into(infoImg);
         infoTitle.setText(title);
         infoAuthor.setText(author);
@@ -732,12 +737,13 @@ public class AllBooks extends AppCompatActivity  {
     List<Long> pg;
 
     public void setData(String jsonStr) throws IndexOutOfBoundsException {
-        isBookEmpty = false;
+
         chapterss = new ArrayList<>();
         desc = new ArrayList<>();
         pg = new ArrayList<>();
         try {
             jsonObject = new JSONObject(jsonStr);
+            Log.e( "setData: ",jsonStr );
             JsonParser parser = new JsonParser();
             JSONObject keydata = jsonObject.getJSONObject(key).getJSONObject("CONTENTS");
             JsonElement element = parser.parse(keydata.getString("PAGES"));
@@ -789,8 +795,14 @@ public class AllBooks extends AppCompatActivity  {
                 Log.e("value", String.valueOf(value));
 
             });
+            isBookEmpty = false;
         } catch (JSONException e) {
             e.printStackTrace();
+            Snackbar.make(findViewById(android.R.id.content), "Something went wrong...", Snackbar.LENGTH_LONG)
+                    .setAnimationMode(Snackbar.ANIMATION_MODE_FADE)
+                    .setAnchorView(additem)
+                    .show();
+            isBookEmpty = true;
         }
 
     }
@@ -802,10 +814,11 @@ public class AllBooks extends AppCompatActivity  {
 
             alert = new MaterialAlertDialogBuilder(this);
 
-            alert.setMessage("Save all tabs before exiting.");
+            alert.setMessage("Save before exiting.");
 
             alert.setNegativeButton("Save & Exit", (dialogInterface, i) ->{
-                setBackup();
+                if (!isBookEmpty)
+                    setBackup();
                 finish();
             });
             alert.setPositiveButton("Exit", (dialogInterface, i) -> finish());

@@ -6,9 +6,8 @@
     android:layout_height="wrap_content"
 
     android:checkable="true"
-
     android:focusable="true"
-    app:cardCornerRadius="12dp">
+    app:cardCornerRadius="16dp">
 
 
     <LinearLayout
@@ -22,7 +21,7 @@
             android:layout_gravity="center"
             android:layout_margin="6dp"
 
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
             <com.airbnb.lottie.LottieAnimationView
@@ -60,7 +59,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
                 android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textColor="#FFFFFF" />
+                android:textColor="@color/colorRed" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
@@ -166,5 +165,14 @@
 
         </LinearLayout>
     </LinearLayout>
-
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/confetti"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="16dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/confetti"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"/>
 </com.google.android.material.card.MaterialCardView>

@@ -16,17 +16,16 @@ import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +40,8 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -53,6 +54,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -65,12 +68,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     TextView imgtext;
      ViewPager viewPager2;
      TabLayout tabLayout;
-     LottieAnimationView lottieAnimationView;
+     LottieAnimationView lottieAnimationView, confetti;
     TextInputLayout textinputtitle, textinputauthor;
     private MyBooksFragment myBooksFragment;
     private ExploreFrangments exploreFrangments;
@@ -101,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
     View contextView;
     private final int REQUEST_CODE = 1;
     static UploadTask uploadTask ;
+    FirebaseRemoteConfig mFirebaseRemoteConfig;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         tabLayout.setupWithViewPager(viewPager2);
-        MainActivity.ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         //viewPagerAdapter.addFragments(favouritesBookFragment, "current");
         viewPagerAdapter.addFragments(myBooksFragment, "My books");
         viewPagerAdapter.addFragments(exploreFrangments, "Explore");
@@ -147,6 +152,9 @@ public class MainActivity extends AppCompatActivity {
 //        if(!mAuth.getCurrentUser().isEmailVerified())
 //            Toast.makeText(this, "Your email is not verified.",Toast.LENGTH_LONG);
         floatingaddbook.setOnClickListener(view -> Show());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            floatingaddbook.setTooltipText("Add Book");
+        }
         bottomAppBar.setNavigationOnClickListener(view -> {
             logoutPop();
 
@@ -174,9 +182,52 @@ public class MainActivity extends AppCompatActivity {
                     showdemo();
             }
         },3000);
-
+        fetchConfig();
 
     }
+    public void fetchConfig(){
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        Map<String, Object> config = new HashMap<>();
+        config.put("new_update_available", false);
+        mFirebaseRemoteConfig.setDefaultsAsync(config);
+        mFirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        boolean updated = task.getResult();
+                        Log.e( "Config params updated: " , String.valueOf(updated));
+                        boolean b = mFirebaseRemoteConfig.getBoolean("new_update_available");
+                        if (updated && b){
+                            Log.e( "Config params updated: " , String.valueOf(b));
+                            showUpdateDialog();
+                        }
+                    }
+
+                });
+    }
+
+    private void showUpdateDialog() {
+        Snackbar.make(contextView, "New app update available, please update the app as soon as possible, to get best user experience.", Snackbar.LENGTH_LONG)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                .setDuration(10000)
+                .setAction("UPDATE", view -> {
+                    final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    }
+                    Map<String, Object> config = new HashMap<>();
+                    config.put("new_update_available", false);
+                    mFirebaseRemoteConfig.setDefaultsAsync(config);
+                })
+                .setAnchorView(floatingaddbook)
+                .show();
+    }
+
     public void showdemo(){
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(floatingaddbook, "Add Books From Here", "You can choose any image for the book!")
@@ -273,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         //intent.setType("image/*");
         intent.setType("image/*");
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,"Select Image Here..."), REQUEST_CODE);
 
@@ -323,7 +375,8 @@ public class MainActivity extends AppCompatActivity {
                 .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
                 .setAnchorView(floatingaddbook)
                 .show();
-        String filename = getFileName(data.getData());
+        String filename = String.valueOf((System.currentTimeMillis()));
+        Log.e("filename", filename);
         StorageReference imagesRef = storageRef.child(mAuth.getUid()+"/"+filename);
         Uri file = data.getData();
         int scaleDivider = 2;
@@ -388,27 +441,6 @@ public class MainActivity extends AppCompatActivity {
 
         return downsizedImageBytes;
     }
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
 
     public void getFileUrl(String imagename) {
 
@@ -417,8 +449,8 @@ public class MainActivity extends AppCompatActivity {
                     Uri url = Uri.parse(uri.toString());
                     //String name = filename.replaceAll("[^a-zA-Z0-9]", "");
                     //String id = String.valueOf((System.currentTimeMillis()/1000));
-                    String id = String.valueOf((System.currentTimeMillis()));
-
+                    String id = imagename;
+                    Log.e( "getFileUrl: id",id );
                         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH).format(Calendar.getInstance().getTime());
                         Log.e( "timedate: ", timeStamp);
 
@@ -433,12 +465,15 @@ public class MainActivity extends AppCompatActivity {
                         mReference.child(id).child("UPLOAD_TIME").setValue(timeStamp);
                         mReference.child(id).child("IMAGELINK").setValue(url.toString())
                                 .addOnSuccessListener(aVoid -> {
+                                    confetti.setVisibility(View.VISIBLE);
+                                    confetti.playAnimation();
                                     Snackbar.make(contextView, "Book Created, Now you can write, by clicking on the book", Snackbar.LENGTH_LONG)
                                             .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
                                             .setAnchorView(floatingaddbook)
                                             .show();
                                     btitle.setText("");
                                     imgtext.setText("");
+                                    //confetti.setVisibility(View.GONE);
                                     lottieAnimationView.setVisibility(View.VISIBLE);
                                     bauthor.setText("");
                                     textinputauthor.setError(null);
@@ -449,11 +484,13 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnFailureListener(e ->{
                                     btnupload.setEnabled(true);
                                     btnimage.setEnabled(true);
+                                    confetti.setVisibility(View.GONE);
                                     Log.d("Saved", e.toString());
                                 } );
 
                 }).addOnFailureListener(e -> {
                     btnupload.setEnabled(true);
+                    confetti.setVisibility(View.GONE);
                     btnimage.setEnabled(true);
                 });
     }
@@ -474,6 +511,7 @@ public class MainActivity extends AppCompatActivity {
         textinputauthor = contactPopupView.findViewById(R.id.textinputauthor);
         textinputtitle = contactPopupView.findViewById(R.id.textinputtitle);
         lottieAnimationView = contactPopupView.findViewById(R.id.imgload);
+        confetti = contactPopupView.findViewById(R.id.confetti);
         btnupload.setEnabled(false);
         progressBar.setVisibility(View.GONE);
         setError();

@@ -3,6 +3,7 @@ package com.subhamgupta.bookkeeper.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,18 +40,23 @@ import com.subhamgupta.bookkeeper.R;
 import com.subhamgupta.bookkeeper.dataclasses.JsonHelper;
 import com.subhamgupta.bookkeeper.dataclasses.SharedSession;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Settings extends AppCompatActivity  {
 
@@ -151,7 +158,7 @@ public class Settings extends AppCompatActivity  {
         if (!child.isEmpty()){
             backuptext.setText("Found " + child.size() + " On device books");
             backup.setEnabled(true);
-            backup.setVisibility(View.VISIBLE);
+            //backup.setVisibility(View.VISIBLE);
             backup.setOnClickListener(view -> {
                 upload(child);
             });
@@ -165,7 +172,7 @@ public class Settings extends AppCompatActivity  {
     }
     public void prepareRestore(){
         List<String> childs = new ArrayList<>();
-
+        restore.setVisibility(View.GONE);
         ref2.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -176,14 +183,15 @@ public class Settings extends AppCompatActivity  {
                 }
                 System.out.println("childs"+childs);
                 if (!childs.isEmpty()){
-                    restore.setVisibility(View.VISIBLE);
+                    restore.setVisibility(View.GONE);
                     restoretext.setText("Found "+ childs.size()+" Book on cloud");
                 }
                 else {
-                    restore.setVisibility(View.VISIBLE);
+                    restore.setVisibility(View.GONE);
                     restoretext.setText("");
                 }
                 children = childs;
+                restore();
 
 
             }
@@ -211,6 +219,107 @@ public class Settings extends AppCompatActivity  {
         }
         return children;
     }
+    public void restore(){
+        progressBar.setVisibility(View.GONE);
+        restore.setVisibility(View.VISIBLE);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        List<String> downloadList = new ArrayList<>();
+        for( String fname : children){
+            Log.e("restore: ",fname );
+            storageRef.child(mAuth.getUid()+"/"+fname).getDownloadUrl()
+                    .addOnSuccessListener(uri -> {
+                        Uri url = Uri.parse(uri.toString());
+                        Log.e( "restore: ",url.toString() );
+                        downloadList.add(url.toString());
+
+                    })
+                    .addOnFailureListener(e -> {
+                        downloadList.add("null");
+                        Log.e( "restore: ",e.getMessage() );
+                    });
+        }
+
+        restore.setEnabled(true);
+        restore.setOnClickListener(view -> {
+
+            if (!downloadList.isEmpty()){
+                for (int i = 0; i < downloadList.size() ; i++) {
+                    if (downloadList.get(i).equals("null"))
+                        downloadList.remove(i);
+                }
+                for (int i = 0; i < downloadList.size() ; i++) {
+                    downloadFile( children.get(i), downloadList.get(i), downloadList.size());
+                }
+
+            }
+
+        });
+
+
+    }
+    int fst =0;
+    public void downloadFile( String filename, String url1, int last){
+
+        progressBar.setVisibility(View.VISIBLE);
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        Log.e( "downloadFile: ", ""+service.isTerminated());
+        service.execute(() -> {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            Log.e( "downloadFile: Thread Name ", Thread.currentThread().getName());
+
+            URL url = null;
+            HttpURLConnection connection;
+            try{ url = new URL(url1);
+                connection = (HttpURLConnection) url.openConnection();
+
+                float totalDataRead=0;
+                File file = new File(this.getFilesDir()+"/BookKeeper/", filename);
+
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                int filesize = connection.getContentLength();
+                Log.e("FILE_SIZE", (double)filesize/1024+" Kb");
+                BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+
+                byte[] dataBuffer = new byte[81920];
+                int bytesRead;
+                float Percent = 0f;
+                while ((bytesRead = in.read(dataBuffer, 0, 81920)) != -1) {
+                    totalDataRead=totalDataRead+bytesRead;
+                    fileOutputStream.write(dataBuffer, 0, bytesRead);
+                     Percent=(totalDataRead*100)/filesize;
+
+                    Log.e("Percent ", String.valueOf(Percent));
+
+
+                }
+                runOnUiThread(()->{
+                    restoretext.setText(fst+ " Books Restored");
+                    progressBar.setProgress((int) fst);
+                });
+                Log.e( "downloadFile: lst, fst ",last+","+fst );
+                fst++;
+                if (fst == last)
+                    runOnUiThread(()->{
+                        progressBar.setVisibility(View.GONE);
+                    });
+            } catch (Exception er) {
+                // handle exception
+
+                runOnUiThread(() -> {
+                    progressBar.setVisibility(View.GONE);
+                    Snackbar.make(findViewById(android.R.id.content),"Something went wrong try again.",Snackbar.LENGTH_LONG).show();
+                });
+                Log.e("error", er.getMessage());
+            }
+
+        });
+
+
+
+
+    }
+
     public void upload(List<String> filesList){
         backup.setEnabled(false);
        for (int i=0;i<filesList.size();i++)
@@ -228,7 +337,7 @@ public class Settings extends AppCompatActivity  {
                     Log.d("error",exception.getMessage());
                 }).addOnSuccessListener(taskSnapshot -> {
 
-                    storageRef.child(filename)
+                    storageRef.child(auth.getUid()+"/"+filename)
                             .getDownloadUrl()
                             .addOnSuccessListener(uri -> ref2.child(filename)
                                     .child("FILELINK").setValue(uri.toString())

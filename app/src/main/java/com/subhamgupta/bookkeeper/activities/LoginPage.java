@@ -34,6 +34,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,7 +64,7 @@ public class LoginPage extends AppCompatActivity {
     SharedSession sharedSession;
     int requestCode = 13;
     private FirebaseAuth mAuth;
-
+    View contextView;
     private static final int RC_SIGN_IN = 1;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -89,12 +90,13 @@ public class LoginPage extends AppCompatActivity {
         linearLayout = findViewById(R.id.linearlog);
         progressBar = findViewById(R.id.logprogress);
         tilpass = findViewById(R.id.textpass);
+        contextView = findViewById(android.R.id.content);
 
 //        animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
 //        animationDrawable.setEnterFadeDuration(2000);
 //        animationDrawable.setExitFadeDuration(4000);
 //        animationDrawable.start();
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"/BookKeeper/");
+        File file = new File(this.getFilesDir(),"/BookKeeper/");
         if (file.isDirectory()) {
             file.delete();
         }
@@ -207,7 +209,7 @@ public class LoginPage extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Log.d("LOGIN", "Email sent.");
-                            Toast.makeText(this, "Password Change Email is sent to " + email, Toast.LENGTH_LONG).show();
+                            showSnackBar("Password Change Email is sent to " );
                         }
                     });
         }
@@ -229,8 +231,8 @@ public class LoginPage extends AppCompatActivity {
             } else {
                 // Permission was denied.......
                 // You can again ask for permission from here
+                showSnackBar("Without this permission app may not work properly");
                 //ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
-                Toast.makeText(this, "Without this permission app may not work properly", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -276,7 +278,7 @@ public class LoginPage extends AppCompatActivity {
                     firebaseAuthWithGoogle(account.getIdToken());
                 } catch (ApiException e) {
                     // Google Sign In failed, update UI appropriately
-                    Toast.makeText(this,"Sign in failed"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackBar("Sign in failed");
                     progressBar.setVisibility(View.INVISIBLE);
                     Log.e("err",e.getMessage());
                     buttonEnable();
@@ -293,15 +295,14 @@ public class LoginPage extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(getApplicationContext(), user.getEmail()+user.getDisplayName(), Toast.LENGTH_SHORT).show();
-
+                        showSnackBar(user.getEmail()+user.getDisplayName());
                         nextActivity();
 
 
                         //updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
-                        Toast.makeText(getApplicationContext(), "Sign in failed", Toast.LENGTH_SHORT).show();
+                        showSnackBar("Sign in failed");
                         //Log.e("Failed",task.getException().toString());
                         progressBar.setVisibility(View.INVISIBLE);
                         //updateUI(null);
@@ -317,6 +318,7 @@ public class LoginPage extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         //Log.e("user",user.toString());
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra("user",user);
         startActivity(intent);
 
@@ -326,7 +328,7 @@ public class LoginPage extends AppCompatActivity {
     public void emailLogIn(){
         String email = etemail.getText().toString(), pass = etpass.getText().toString();
         if (email.isEmpty() || pass.isEmpty()){
-            Toast.makeText(getApplicationContext(), "Enter Credentials", Toast.LENGTH_LONG).show();
+            showSnackBar("Enter Credentials");
             progressBar.setVisibility(View.INVISIBLE);
             buttonEnable();
         }
@@ -340,9 +342,12 @@ public class LoginPage extends AppCompatActivity {
                     if(!user.isEmailVerified()){
                         user.sendEmailVerification();
                         buttonEnable();
-                        Toast.makeText(getApplicationContext(), "Verification link is sent to "+email+" verify to login",Toast.LENGTH_LONG).show();
+                        Snackbar.make(contextView, "Verification link is sent to "+email+" verify to login", Snackbar.LENGTH_LONG)
+                                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                                .setDuration(10000)
+                                .show();
                     }else {
-                        Toast.makeText(getApplicationContext(), "Login Successful",Toast.LENGTH_LONG).show();
+                        showSnackBar("Login Successful");
 
                         nextActivity();
 
@@ -352,7 +357,7 @@ public class LoginPage extends AppCompatActivity {
 
                 }
                 else {
-                    Toast.makeText(this, "Wrong email or password", Toast.LENGTH_LONG).show();
+                    showSnackBar("Wrong email or password");
                     buttonEnable();
                 }
 
@@ -367,17 +372,22 @@ public class LoginPage extends AppCompatActivity {
             });
         }
     }
+    public void showSnackBar(String msg){
+        Snackbar.make(contextView, msg, Snackbar.LENGTH_LONG)
+                .setAnimationMode(Snackbar.ANIMATION_MODE_SLIDE)
+                .show();
+    }
     public void signInEmail(){
         String email = etemail.getText().toString(), pass = etpass.getText().toString();
         if (email.isEmpty() || pass.isEmpty()){
-            Toast.makeText(getApplicationContext(), "Enter Credentials", Toast.LENGTH_LONG).show();
+            showSnackBar("Enter Credentials");
             progressBar.setVisibility(View.INVISIBLE);
             buttonEnable();
         }
         else {
             mAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener(this, task -> {
                 if (task.isComplete()){
-                    Toast.makeText(getApplicationContext(), "Succecfully Account Created", Toast.LENGTH_LONG).show();
+                    showSnackBar("Successfully Account Created");
                     sharedSession.setEmail(email);
                     emailLogIn();
 
@@ -385,7 +395,7 @@ public class LoginPage extends AppCompatActivity {
                 else {
                     progressBar.setVisibility(View.INVISIBLE);
                     buttonEnable();
-                    Toast.makeText(getApplicationContext(), "Something Went Wrong..", Toast.LENGTH_LONG).show();
+                    showSnackBar("Something Went Wrong..");
                 }
             });
         }

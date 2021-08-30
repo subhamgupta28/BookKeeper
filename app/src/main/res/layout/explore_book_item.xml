@@ -7,7 +7,7 @@
     android:id="@+id/exreadcard"
     android:clickable="true"
     android:focusable="true"
-    app:cardElevation="8dp"
+    app:cardElevation="12dp"
     app:cardCornerRadius="8dp">
 
     <RelativeLayout

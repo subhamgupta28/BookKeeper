@@ -165,6 +165,7 @@
                 <Button
                     android:id="@+id/allbackup"
                     android:text="backup"
+                    android:visibility="gone"
                     android:textColor="@color/white"
                     android:layout_marginEnd="12dp"
                     android:layout_width="wrap_content"

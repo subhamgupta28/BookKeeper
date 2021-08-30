@@ -6,20 +6,22 @@
         <entry key="..\:/BookKeeper/app/src/main/res/drawable/bubble_bg.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/drawable/img_fade.xml" value="0.186328125" />
         <entry key="..\:/BookKeeper/app/src/main/res/drawable/share_btn_background.xml" value="0.186328125" />
-        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_all_books.xml" value="0.17421875" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_all_books.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_login_page.xml" value="0.264" />
-        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_main.xml" value="0.17421875" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_settings.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_shared_reader.xml" value="0.17421875" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/activity_splash_screen.xml" value="0.2" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/book_item.xml" value="0.2" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/bottomsheet.xml" value="0.23229166666666667" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/bubble_popup.xml" value="0.23229166666666667" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/dialog_item.xml" value="0.264" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/explore_book_item.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/fragment_explore_frangments.xml" value="0.17152777777777778" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/fragment_my_books.xml" value="0.17152777777777778" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/list_popup_item.xml" value="0.23229166666666667" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/my_book_item.xml" value="0.1722007722007722" />
-        <entry key="..\:/BookKeeper/app/src/main/res/layout/popup.xml" value="0.2" />
+        <entry key="..\:/BookKeeper/app/src/main/res/layout/popup.xml" value="0.264" />
         <entry key="..\:/BookKeeper/app/src/main/res/layout/read_book_item.xml" value="0.2" />
       </map>
     </option>

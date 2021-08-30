@@ -80,7 +80,7 @@ public class SplashScreen extends AppCompatActivity {
                 LoginActivity();
             }
 
-        }, 2500);
+        }, 3000);
 
     }
     public void createPublicFolders(){
@@ -98,11 +98,13 @@ public class SplashScreen extends AppCompatActivity {
 
     public void LoginActivity(){
         Intent intent = new Intent(getApplicationContext(), LoginPage.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
         finish();
     }
     public void HomeActivity(){
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
         finish();
     }

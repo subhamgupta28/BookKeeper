@@ -45,9 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-
         style="@style/Widget.MaterialComponents.BottomAppBar"
-
         app:fabAlignmentMode="end"
         app:fabAnimationMode="slide"
         app:elevation="24dp"

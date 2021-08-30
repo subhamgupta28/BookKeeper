@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -179,7 +180,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
 
         alert.setMessage("All your book data will be deleted,\n" +
                 "Once deleted cannot be retrieved");
-        alert.setNegativeButton("delete", (dialogInterface, i) -> deleteBook(myBookModel.getIMAGELINK(), myBookModel.getTITLE(), myBookModel.getKEY()));
+        alert.setNegativeButton("delete", (dialogInterface, i) -> deleteBook(myBookModel.getIMAGELINK(), myBookModel.getIMAGENAME(), myBookModel.getKEY()));
         alert.setPositiveButton("cancel", (dialogInterface, i) -> {
 
         });
@@ -235,18 +236,21 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_book_item, parent, false);
         return new MyBookHolder(view);
     }
-    public void deleteBook(String link, String title, String key){
+    public void deleteBook(String link, String imgname, String key){
         Log.e("link",link+" kk");
-        //firebaseStorage = FirebaseStorage.getInstance();
-        photoRef = storageRef.child(FirebaseAuth.getInstance().getUid()+"/"+key+".json");
-        photoRef.delete().addOnSuccessListener(aVoid -> {
+        String auth = FirebaseAuth.getInstance().getUid();
+        List<String> item = Arrays.asList(imgname, key+".json");
+        for (String it : item) {
+            photoRef = storageRef.child(auth+"/"+it);
+            photoRef.delete().addOnSuccessListener(aVoid -> {
 
-            Log.d("DEL", "onSuccess: deleted file from firebase");
-        }).addOnFailureListener(exception -> {
-            // Uh-oh, an error occurred!
-            Log.e("ERROR", exception.getMessage());
-            //Toast.makeText(context,"Book Not Deleted", Toast.LENGTH_LONG).show();
-        });
+                Log.d("DEL", it+" onSuccess: deleted file from firebase");
+            }).addOnFailureListener(exception -> {
+                // Uh-oh, an error occurred!
+                Log.e("ERROR", exception.getMessage());
+                //Toast.makeText(context,"Book Not Deleted", Toast.LENGTH_LONG).show();
+            });
+        }
         DatabaseReference ref = FirebaseDatabase
                 .getInstance()
                 .getReference()
@@ -330,6 +334,7 @@ public class MyBookAdapter extends FirebaseRecyclerAdapter<MyBookModel, MyBookAd
     }
     public void nextPage(Context context, String title, String author, String url, String fileurl, String key, String sync, String date){
         Intent intent = new Intent(context, AllBooks.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra("title",title);
         intent.putExtra("author",author);
         intent.putExtra("fileurl",fileurl);

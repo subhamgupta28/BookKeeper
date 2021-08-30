@@ -89,6 +89,7 @@ public class MyAdapter extends FirebaseRecyclerAdapter<Model, MyAdapter.MyViewHo
     }
     public void nextPage(Context context, String title, String author, String url, String fileurl, String key){
         Intent intent = new Intent(context, ExploreBooks.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra("title",title);
         intent.putExtra("author",author);
         intent.putExtra("url",url);
@@ -98,6 +99,7 @@ public class MyAdapter extends FirebaseRecyclerAdapter<Model, MyAdapter.MyViewHo
     }
     private void share(Context context, String link) {
         Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT,"Share Book");
         intent.putExtra(Intent.EXTRA_TEXT,"Check out this book which i am reading now\nClick here "+link);
